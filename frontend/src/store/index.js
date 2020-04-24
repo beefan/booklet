@@ -12,6 +12,9 @@ const store = new Vuex.Store({
   getters: {
     //vuex supports getter properties for various elements of state
     getBooklet: state => {
+      console.log('getter was successfully called from store');
+      console.log('booklet value in the store: ');
+      console.log(state.booklet);
       return state.booklet;
     }
   },
@@ -23,14 +26,27 @@ const store = new Vuex.Store({
     // increment (state) {
     //   state.count++
     // },
-    updateBooklet(state, payload) {
-      state.booklet = apis.getBooklet(payload.id);
+    setBooklet(state, payload) {
+      console.log('setBooklet mutation called succesfully');
+      console.log('payload');
+      console.log(payload);
+      state.booklet = payload;
     }
   },
   actions: {
     //like mutations but async allowed
     //used for api calls
     //this.$store.dispatch('xxx') in child components
+    async updateBooklet(state, payload) {
+      const vm = this;
+      console.log('dispatch successful. calling api get booklet now...');
+      apis.getBooklet(payload.id).then( res => {
+        vm.commit('setBooklet', res);
+        console.log('inside the api then ');
+        console.log(res);
+      });
+
+    }
   }
 });
 
