@@ -1,8 +1,6 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <Booklet />
-  </div>
+<template lang="pug">
+  b-container#app
+    Booklet
 </template>
 
 <script>

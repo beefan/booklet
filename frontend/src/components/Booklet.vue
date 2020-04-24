@@ -1,7 +1,9 @@
 <template lang="pug">
 div
+  b.row
     h1 booklet
-    p data: {{ $store.getBooklet }}
+  hr
+  p data: {{ $store.getBooklet.title }}
 </template>
 
 <script>
@@ -12,4 +14,6 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="sass">
+
+</style>
