@@ -3,16 +3,55 @@ div
   b.row#booklet-header
     h3 booklet:
     h2 {{ title }}
-    svg.bi.bi-cursor-text(width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg")
-      path(fill-rule="evenodd" d="M5 2a.5.5 0 01.5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0110.5 1.5a.5.5 0 010 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 00-.436.294V7.5H9a.5.5 0 010 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 010 1 4.165 4.165 0 01-2.06-.566A4.561 4.561 0 018 13.65a4.561 4.561 0 01-.44.285 4.165 4.165 0 01-2.06.566.5.5 0 010-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 010-1h.5V3.228a3.49 3.49 0 00-.436-.294A3.166 3.166 0 005.5 2.5.5.5 0 015 2zm3.352 1.355zm-.704 9.29z" clip-rule="evenodd")
-    p {{ author }}
+    p ( by: {{ author }} )
   hr
   b-container#flip
-    b-button
+    b-row
+      div#stage(v-if="going") {{ page }}
+    b-row#controls
+      b-col(sm="2")
+        label(for="speed-range") speed
+      b-col(sm="8")
+        b-form-input.speed-range(type="range" v-model="timing" min="0" max="2" step="0.1")
+      b-col(sm="2")
+        b-button(:variant="going ? 'danger' : 'success'" @click="controlFlow") 
+          b-icon-pause-fill(v-if="going")
+          b-icon-play(v-if="!going")
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      going: false,
+      timing: 1,
+      word: "begin",
+      page: "begin the first page"
+    };
+  },
+  methods: {
+    controlFlow() {
+      this.going = !this.going;
+      if (this.going) {
+        this.updateCanvas();
+      }
+    },
+    updateCanvas() {
+      let acts = this.acts[0];
+      let scenes = acts[0];
+      let counter = 0;
+      let pause = 2000 - 2000*this.timing;
+
+      for (let scene of scenes) {
+      setTimeout(() =>
+        {
+          this.page = counter + ') ' + scene;
+        }, pause);
+        counter++;
+      }
+      counter = 0;
+    }
+  },
   computed: {
     title() {
       return this.$store.state.booklet.title;
@@ -37,4 +76,7 @@ export default {
     margin-right: 2%
   h3
     font-style: italic
+#stage
+  width: 100%
+  height: 80%
 </style>
