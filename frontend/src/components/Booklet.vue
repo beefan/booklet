@@ -27,7 +27,7 @@ export default {
       timing: 1,
       word: "begin",
       page: "begin the first page",
-      curr: {}
+      curr: { act: 0, scene: 0, para: 0, sent: 0, word: 0 }
     };
   },
   methods: {
@@ -40,23 +40,23 @@ export default {
     updateCanvas() {
       let v = this;
 
-      if (v.curr.act < 0 ) {
-        //end of booklet
-        v.page = 'end';
+      //end of booklet
+      if (v.curr.act < 0) {
+        //visually notify and return
+        v.page = "end";
         return;
       }
+      let pause = 2000 * v.timing;
 
-      let pause = 2000 * (v.timing);
-      console.log(pause);
-
+      //if going, and first scene of an act//new act
       if (v.going) {
         setTimeout(function() {
-            v.page = 'act: ' + v.curr.act + ' scene: ' + v.curr.scene + ' ' + v.sceneText;
-            v.curr = v.next;
-            v.updateCanvas();
-          }, pause);
-        }
+          v.page = v.sceneText;
+          v.curr = v.next;
+          v.updateCanvas();
+        }, pause);
       }
+    }
   },
   computed: {
     title() {
@@ -69,30 +69,68 @@ export default {
       return this.$store.state.booklet.acts;
     },
     sceneText() {
-      if (this.curr.act < 0) { return '' }
-      console.log(this.curr.act + "act");
-      console.log(this.curr.scene + " scene");
-      return this.acts[this.curr.act][this.curr.scene];
+      if (this.curr.act < 0) {
+        return "";
+      }
+      let sentence = this.acts[this.curr.act]
+                              [this.curr.scene]
+                              [this.curr.para]
+                              [this.curr.sent];
+      return sentence;
     },
     next() {
       let totalActs = this.acts.length - 1;
       let thisAct = this.acts[this.curr.act];
+
       let scenesInAct = thisAct.length - 1;
+      let thisScene = thisAct[this.curr.scene];
 
-      if (this.curr.scene + 1 <= scenesInAct) {
-        return {"act": this.curr.act, "scene": this.curr.scene + 1};
-      }else if (this.curr.act + 1 <= totalActs) {
-        return {"act": this.curr.act + 1, "scene":0};
-      }else {
+      let paraInScene = thisScene.length - 1;
+      let thisPara = thisScene[this.curr.para];
 
-      //end of booklet
-      //restart for testing
-      return {"act":0, "scene": 0};
+      let sentsInPara = thisPara.length - 1;
+      //let thisSentence = thisPara[this.curr.sent];
+
+      if (this.curr.sent + 1 <= sentsInPara) {
+        return {
+          act: this.curr.act,
+          scene: this.curr.scene,
+          para: this.curr.para,
+          sent: this.curr.sent + 1,
+          word: 0
+        };
+      } else if (this.curr.para + 1 <= paraInScene) {
+        return {
+          act: this.curr.act,
+          scene: this.curr.scene,
+          para: this.curr.para + 1,
+          sent: 0,
+          word: 0
+        };
+      } else if (this.curr.scene + 1 <= scenesInAct) {
+        return {
+          act: this.curr.act,
+          scene: this.curr.scene + 1,
+          para: 0,
+          sent: 0,
+          word: 0
+        };
+      } else if (this.curr.act + 1 <= totalActs) {
+        return { 
+          act: this.curr.act + 1, 
+          scene: 0, 
+          para: 0,
+          sent: 0, 
+          word: 0 
+        };
+      } else {
+        //end of booklet
+        //restart for testing
+        return { act: 0, scene: 0, para: 0, sent: 0, word: 0 };
       }
     }
   },
   created() {
-    this.curr = {"act": 0, "scene": 0};
     this.$store.dispatch("updateBooklet", { id: 4 });
   }
 };

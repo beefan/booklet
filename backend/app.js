@@ -26,23 +26,32 @@ function getBooklet() {
     let booklet = {}
 
     let acts = []
-    let act1 = []
-
-    let scene1 = "example lorem ipsum example lorem ipsum example lorem ipsum. example lorem ipsum example lorem ipsum example lorem ipsum."
-    let scene2 = "example lorem ipsum example lorem ipsum example lorem ipsum. example lorem ipsum example lorem ipsum example lorem ipsum."
-    let scene3 = "example lorem ipsum example lorem ipsum example lorem ipsum. example lorem ipsum example lorem ipsum example lorem ipsum."
+    let exAct = []
+    let exScene = []
+    let exPara = []
+    let exSentence = "example lorem ipsum example lorem ipsum example lorem ipsum."
     
-    act1.push(scene1)
-    act1.push(scene2)
-    act1.push(scene3)
+    //10 example sentence in paragraph
+    for( let i=0; i<10; i++){
+      exPara.push(i + " " + exSentence);
+    }
 
-    acts.push(act1)
-    acts.push(act1)
-    acts.push(act1)
+    //5 example paragraph in scene
+    for( let i=0; i<5; i++){
+      exScene.push(exPara);
+    }
 
-    booklet.acts = []
-    booklet.acts.push(acts)
+    //6 example scenes in act
+    for(let i=0; i<6; i++) {
+      exAct.push(exScene);
+    }
 
+    //4 example acts in acts
+    for( let i=0; i<4; i++) {
+      acts.push(exAct);
+    }
+
+    booklet.acts = acts;
     booklet.title = 'Test Title'
     booklet.author = 'Behtoven'
 
