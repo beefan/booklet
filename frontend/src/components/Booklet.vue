@@ -26,7 +26,8 @@ export default {
       going: false,
       timing: 1,
       word: "begin",
-      page: "begin the first page"
+      page: "begin the first page",
+      curr: {}
     };
   },
   methods: {
@@ -37,20 +38,25 @@ export default {
       }
     },
     updateCanvas() {
-      let acts = this.acts[0];
-      let scenes = acts[0];
-      let counter = 0;
-      let pause = 2000 - 2000*this.timing;
+      let v = this;
 
-      for (let scene of scenes) {
-      setTimeout(() =>
-        {
-          this.page = counter + ') ' + scene;
-        }, pause);
-        counter++;
+      if (v.curr.act < 0 ) {
+        //end of booklet
+        v.page = 'end';
+        return;
       }
-      counter = 0;
-    }
+
+      let pause = 2000 * (v.timing);
+      console.log(pause);
+
+      if (v.going) {
+        setTimeout(function() {
+            v.page = 'act: ' + v.curr.act + ' scene: ' + v.curr.scene + ' ' + v.sceneText;
+            v.curr = v.next;
+            v.updateCanvas();
+          }, pause);
+        }
+      }
   },
   computed: {
     title() {
@@ -62,8 +68,31 @@ export default {
     acts() {
       return this.$store.state.booklet.acts;
     },
+    sceneText() {
+      if (this.curr.act < 0) { return '' }
+      console.log(this.curr.act + "act");
+      console.log(this.curr.scene + " scene");
+      return this.acts[this.curr.act][this.curr.scene];
+    },
+    next() {
+      let totalActs = this.acts.length - 1;
+      let thisAct = this.acts[this.curr.act];
+      let scenesInAct = thisAct.length - 1;
+
+      if (this.curr.scene + 1 <= scenesInAct) {
+        return {"act": this.curr.act, "scene": this.curr.scene + 1};
+      }else if (this.curr.act + 1 <= totalActs) {
+        return {"act": this.curr.act + 1, "scene":0};
+      }else {
+
+      //end of booklet
+      //restart for testing
+      return {"act":0, "scene": 0};
+      }
+    }
   },
   created() {
+    this.curr = {"act": 0, "scene": 0};
     this.$store.dispatch("updateBooklet", { id: 4 });
   }
 };
