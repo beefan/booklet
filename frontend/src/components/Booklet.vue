@@ -7,7 +7,7 @@ div
   hr
   b-container#flip
     b-row
-      div#stage(v-if="going") {{ page }}
+      div#stage(v-if="going")
     b-row#controls
       b-col(sm="2")
         label(for="speed-range") speed
@@ -51,11 +51,43 @@ export default {
       //if going, and first scene of an act//new act
       if (v.going) {
         setTimeout(function() {
-          v.page = v.sceneText;
+          let words = v.sceneText.split(" ");
+          for (let i = 0; i < words.length; i++) {
+            setTimeout(function() {
+              v.curr.word = i;
+              document.getElementById('stage').innerHTML = v.createPageElement(words, i);
+            }, ((pause - 50) / words.length) * i + 1);
+          }
           v.curr = v.next;
           v.updateCanvas();
         }, pause);
       }
+    },
+    createPageElement(words, i) {
+      let frontString = words
+        .filter((value, index) => {
+          if (index < i) {
+            return value;
+          }
+        })
+        .join(" ");
+      console.log("front string " + frontString);
+      let backString = words
+        .filter((value, index) => {
+          if (index > i) {
+            return value;
+          }
+        })
+        .join(" ");
+      console.log("back string " + backString);
+      let sceneText =
+        frontString +
+        ' <span class="highlighted-word">' +
+        words[i] +
+        '</span> ' +
+        backString;
+      console.log(sceneText + " this is the scene text");
+      return sceneText;
     }
   },
   computed: {
@@ -72,10 +104,9 @@ export default {
       if (this.curr.act < 0) {
         return "";
       }
-      let sentence = this.acts[this.curr.act]
-                              [this.curr.scene]
-                              [this.curr.para]
-                              [this.curr.sent];
+      let sentence = this.acts[this.curr.act][this.curr.scene][this.curr.para][
+        this.curr.sent
+      ];
       return sentence;
     },
     next() {
@@ -116,12 +147,12 @@ export default {
           word: 0
         };
       } else if (this.curr.act + 1 <= totalActs) {
-        return { 
-          act: this.curr.act + 1, 
-          scene: 0, 
+        return {
+          act: this.curr.act + 1,
+          scene: 0,
           para: 0,
-          sent: 0, 
-          word: 0 
+          sent: 0,
+          word: 0
         };
       } else {
         //end of booklet
@@ -146,4 +177,6 @@ export default {
 #stage
   width: 100%
   height: 80%
+  .highlighted-word
+    background-color: yellow
 </style>
