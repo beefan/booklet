@@ -1,7 +1,7 @@
 <template lang="pug">
   b-container#flip
     b-row
-      div#stage(v-if="going")
+      div#stage
     b-row#controls
       b-col(sm="2")
         label(for="speed-range") speed
@@ -33,34 +33,51 @@ export default {
       }
     },
     updateCanvas() {
-      let v = this;
-
       //end of booklet
-      if (v.curr.act < 0) {
+      if (this.curr.act < 0) {
         //visually notify and return
-        v.page = "end";
+        this.page = "end";
         return;
       }
 
+      if (this.curr.para == 0) {
+        console.log('showing page pause')
+        this.showPagePause().then(() => this.runThroughSentence());
+      } else {
+        this.runThroughSentence();
+        console.log('running through sentence')
+      }
+    },
+    runThroughSentence() {
+      let v = this;
+
       if (v.going) {
         let words = v.sceneText.split(" ");
-        let timeFunc = () => new Promise(resolve => setTimeout(resolve, v.pause));
+        let timeFunc = () =>
+          new Promise(resolve => setTimeout(resolve, v.pause));
 
-        let focusWord = (word) => {
+        let focusWord = word => {
           timeFunc().then(() => {
             v.curr.word = word;
-            document.getElementById("stage").innerHTML = v.createPageElement(words, word);
-            if (word + 1 < words.length){
+            document.getElementById("stage").innerHTML = v.createPageElement(
+              words,
+              word
+            );
+            if (word + 1 < words.length) {
               focusWord(word + 1);
-            }else {
+            } else {
               //set up next page
               v.curr = v.next;
               v.updateCanvas();
             }
           });
-        }
+        };
         focusWord(v.curr.word);
-        }
+      }
+    },
+    showPagePause() {
+      document.getElementById("stage").innerHTML = " ";
+      return new Promise(resolve => setTimeout(resolve, this.pause * 4));
     },
     createPageElement(words, i) {
       let frontString = words
@@ -163,7 +180,7 @@ export default {
   created() {
     this.$store.dispatch("updateBooklet", { id: 4 });
   }
-}
+};
 </script>
 
 <style lang="sass">
