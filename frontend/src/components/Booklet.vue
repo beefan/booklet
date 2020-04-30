@@ -19,6 +19,7 @@ export default {
     return {
       going: false,
       timing: 1,
+      wait: 250,
       word: "begin",
       page: "begin the first page",
       curr: { act: 0, scene: 0, para: 0, sent: 0, word: 0 }
@@ -40,22 +41,26 @@ export default {
         v.page = "end";
         return;
       }
-      let pause = 2000 * v.timing;
 
-      //if going, and first scene of an act//new act
       if (v.going) {
-        setTimeout(function() {
-          let words = v.sceneText.split(" ");
-          for (let i = 0; i < words.length; i++) {
-            setTimeout(function() {
-              v.curr.word = i;
-              document.getElementById('stage').innerHTML = v.createPageElement(words, i);
-            }, ((pause - 50) / words.length) * i + 1);
-          }
-          v.curr = v.next;
-          v.updateCanvas();
-        }, pause);
-      }
+        let words = v.sceneText.split(" ");
+        let timeFunc = () => new Promise(resolve => setTimeout(resolve, v.pause));
+
+        let focusWord = (word) => {
+          timeFunc().then(() => {
+            v.curr.word = word;
+            document.getElementById("stage").innerHTML = v.createPageElement(words, word);
+            if (word + 1 < words.length){
+              focusWord(word + 1);
+            }else {
+              //set up next page
+              v.curr = v.next;
+              v.updateCanvas();
+            }
+          });
+        }
+        focusWord(v.curr.word);
+        }
     },
     createPageElement(words, i) {
       let frontString = words
@@ -78,7 +83,7 @@ export default {
         frontString +
         ' <span class="highlighted-word">' +
         words[i] +
-        '</span> ' +
+        "</span> " +
         backString;
       console.log(sceneText + " this is the scene text");
       return sceneText;
@@ -93,6 +98,9 @@ export default {
     },
     acts() {
       return this.$store.state.booklet.acts;
+    },
+    pause() {
+      return this.timing * this.wait;
     },
     sceneText() {
       if (this.curr.act < 0) {
@@ -158,7 +166,7 @@ export default {
   created() {
     this.$store.dispatch("updateBooklet", { id: 4 });
   }
-};
+}
 </script>
 
 <style lang="sass">
@@ -167,7 +175,7 @@ export default {
   height: 80%
   .highlighted-word
     background-color: yellow
-#flip 
+#flip
   padding: 0
   margin: 0
 </style>
