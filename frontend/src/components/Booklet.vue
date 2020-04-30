@@ -70,7 +70,6 @@ export default {
           }
         })
         .join(" ");
-      console.log("front string " + frontString);
       let backString = words
         .filter((value, index) => {
           if (index > i) {
@@ -78,14 +77,12 @@ export default {
           }
         })
         .join(" ");
-      console.log("back string " + backString);
       let sceneText =
         frontString +
         ' <span class="highlighted-word">' +
         words[i] +
         "</span> " +
         backString;
-      console.log(sceneText + " this is the scene text");
       return sceneText;
     }
   },
