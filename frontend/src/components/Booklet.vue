@@ -1,10 +1,4 @@
 <template lang="pug">
-div
-  b.row#booklet-header
-    h3 booklet:
-    h2 {{ title }}
-    p ( by: {{ author }} )
-  hr
   b-container#flip
     b-row
       div#stage(v-if="going")
@@ -168,15 +162,12 @@ export default {
 </script>
 
 <style lang="sass">
-#booklet-header
-  h2
-    margin-left: 2%
-    margin-right: 2%
-  h3
-    font-style: italic
 #stage
   width: 100%
   height: 80%
   .highlighted-word
     background-color: yellow
+#flip 
+  padding: 0
+  margin: 0
 </style>

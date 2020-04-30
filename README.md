@@ -1,24 +1,22 @@
-# frontend
+# booklet
+
+Text reader application using Vue.js. Read text in easily digested snippets. No tapping for next page. Press play and let the content capture your attention. 
+
+## in progress screen
+![app screen shot](booklet-screen.png)
 
 ## Project setup
-```
-npm install
-```
+In two terminals
 
-### Compiles and hot-reloads for development
+1. 
 ```
+cd backend
+npm install
+node app.js
+```
+2. 
+```
+cd frontend 
+npm install
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
