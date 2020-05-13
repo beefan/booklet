@@ -3,23 +3,17 @@
     b-row#booklet-info
       div {{ title }}
       div {{ author }} 
-      div pos(act: {{ curr.act + 1}} | scene: {{ curr.scene + 1 }} | paragraph: {{ curr.para + 1 }} | sentence: {{ curr.sent + 1}})
     b-row
       div#stage
-    nav-slider#controls
     b-row#controls
-      b-col(xs="2")
-        b-button(variant="dark" @click="prev()")
-          b-icon-chevron-double-left
-      b-col(xs="6")
+      b-col(xs="10")
         b-form-input.speed-range(type="range" v-model="timing" min="0" max="2" step="0.1")
       b-col(xs="2")
         b-button(:variant="going ? 'danger' : 'success'" @click="controlFlow") 
           b-icon-pause-fill(v-if="going")
           b-icon-play(v-if="!going")
-      b-col(xs="2")
-        b-button(variant="dark" @click="next()")
-          b-icon-chevron-double-right
+    nav-slider
+
 </template>
 
 <script>
@@ -78,10 +72,13 @@ export default {
 
       if (v.going) {
         let words = v.sceneText.split(" ");
+
         let timeFunc = () =>
           new Promise(resolve => setTimeout(resolve, v.pause));
 
         let focusWord = word => {
+          if (!v.arraysEqual(words, v.sceneText.split(" "))) { v.change() }
+
           timeFunc().then(() => {
             v.setWord(word);
             document.getElementById("stage").innerHTML = v.createPageElement(
@@ -108,6 +105,15 @@ export default {
 
         focusWord(v.curr.word);
       }
+    },
+    arraysEqual(a, b) {
+      let result = true;
+      a.forEach( (val, index) => {
+        if (val !== b[index]) {
+          result = false;
+        }
+        })
+      return result;
     },
     showPagePause() {
       document.getElementById("stage").innerHTML = '<b-icon-circle-half id="pause-it" />';

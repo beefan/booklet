@@ -1,5 +1,5 @@
 <template lang="pug">
-b-row
+b-row#slider-parent
   div#history-slider
     div.slider-item(v-for="page in pages" :class="getClass(page)" :id="page.id" @click="setPage(page)")
       p {{ renderPage(page) }}
@@ -89,11 +89,16 @@ export default {
 </script>
 
 <style lang="sass">
+#slider-parent
+  position: fixed
+  bottom: 80px
+  width: 100%
+
 #history-slider
+  position: relative
   display: flex
   flex-flow: row
   overflow-x: auto
-  width: 100%
   padding-top: 2%
   padding-bottom: 2%
   box-shadow: 1px 1px 2px #343a40 inset, -1px -1px 2px #343a40 inset

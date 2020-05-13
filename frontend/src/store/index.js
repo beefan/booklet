@@ -7,6 +7,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     booklet: [],
+    isReading: false,
     curr: { act: 0, scene: 0, para: 0, sent: 0, word: 0 }
   },
   getters: {
@@ -15,9 +16,24 @@ const store = new Vuex.Store({
     },
     getCurr: state => {
       return state.curr;
+    },
+    isReading: state => {
+      return state.isReading;
     }
   },
   mutations: {
+    navigate(state, payload) {
+      state.curr = {
+        act: payload.act,
+        scene: payload.scene,
+        para: payload.para,
+        sent: payload.sent,
+        word: 0
+      };
+    },
+    toggleRead(state) {
+      state.isReading = !state.isReading;
+    },
     setBooklet(state, payload) {
       state.booklet = payload;
     },
