@@ -6,9 +6,10 @@
       div pos(act: {{ curr.act + 1}} | scene: {{ curr.scene + 1 }} | paragraph: {{ curr.para + 1 }} | sentence: {{ curr.sent + 1}})
     b-row
       div#stage
+    nav-slider#controls
     b-row#controls
       b-col(xs="2")
-        b-button(variant="dark" @click="curr = prev; changed = true")
+        b-button(variant="dark" @click="prev()")
           b-icon-chevron-double-left
       b-col(xs="6")
         b-form-input.speed-range(type="range" v-model="timing" min="0" max="2" step="0.1")
@@ -17,12 +18,16 @@
           b-icon-pause-fill(v-if="going")
           b-icon-play(v-if="!going")
       b-col(xs="2")
-        b-button(variant="dark" @click="curr = next; changed = true")
+        b-button(variant="dark" @click="next()")
           b-icon-chevron-double-right
 </template>
 
 <script>
+import NavSlider from '../components/navSlider.vue'
 export default {
+  components: {
+    'nav-slider': NavSlider
+  },
   data() {
     return {
       going: false,
@@ -30,11 +35,24 @@ export default {
       wait: 250,
       word: "begin",
       page: "begin the first page",
-      curr: { act: 0, scene: 0, para: 0, sent: 0, word: 0 },
       changed: false
     };
   },
   methods: {
+    change() {
+      this.changed = true;
+    },
+    prev() {
+      this.change();
+      this.$store.commit('prevPage')
+    },
+    next() {
+      this.change();
+      this.$store.commit('nextPage')
+    },
+    setWord(word) {
+      this.$store.commit('setWord', word)
+    },
     controlFlow() {
       this.going = !this.going;
       if (this.going) {
@@ -65,7 +83,7 @@ export default {
 
         let focusWord = word => {
           timeFunc().then(() => {
-            v.curr.word = word;
+            v.setWord(word);
             document.getElementById("stage").innerHTML = v.createPageElement(
               words,
               word
@@ -77,12 +95,12 @@ export default {
                 focusWord(word + 1);
               }else {
                 v.changed = false;
-                v.curr.word = 0;
+                v.setWord(0)
                 v.updateCanvas();
               }
             } else {
               //set up next page
-              v.curr = v.next;
+              v.next();
               v.updateCanvas();
             }
           });
@@ -120,6 +138,9 @@ export default {
     }
   },
   computed: {
+    curr() {
+      return this.$store.state.curr;
+    },
     title() {
       return this.$store.state.booklet.title;
     },
@@ -140,93 +161,6 @@ export default {
         this.curr.sent
       ];
       return sentence;
-    },
-    prev() {
-      if (this.curr.sent - 1 >= 0) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene,
-          para: this.curr.para,
-          sent: this.curr.sent - 1,
-          word: 0
-        }
-      } else if (this.curr.para - 1 >= 0) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene,
-          para: this.curr.para - 1,
-          sent: 0,
-          word: 0
-        }
-      } else if (this.curr.scene - 1 >= 0) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene - 1,
-          para: 0,
-          sent: 0,
-          word: 0
-        }
-      } else if (this.curr.act - 1 >= 0) {
-        return {
-          act: this.curr.act - 1,
-          scene: 0,
-          para: 0,
-          sent: 0,
-          word: 0
-        }
-      }else {
-        return { act: 0, scene: 0, para: 0, sent: 0, word: 0 };
-      }
-    },
-    next() {
-      let totalActs = this.acts.length - 1;
-      let thisAct = this.acts[this.curr.act];
-
-      let scenesInAct = thisAct.length - 1;
-      let thisScene = thisAct[this.curr.scene];
-
-      let paraInScene = thisScene.length - 1;
-      let thisPara = thisScene[this.curr.para];
-
-      let sentsInPara = thisPara.length - 1;
-
-      if (this.curr.sent + 1 <= sentsInPara) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene,
-          para: this.curr.para,
-          sent: this.curr.sent + 1,
-          word: 0
-        };
-      } else if (this.curr.para + 1 <= paraInScene) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene,
-          para: this.curr.para + 1,
-          sent: 0,
-          word: 0
-        };
-      } else if (this.curr.scene + 1 <= scenesInAct) {
-        return {
-          act: this.curr.act,
-          scene: this.curr.scene + 1,
-          para: 0,
-          sent: 0,
-          word: 0
-        };
-      } else if (this.curr.act + 1 <= totalActs) {
-        return {
-          act: this.curr.act + 1,
-          scene: 0,
-          para: 0,
-          sent: 0,
-          word: 0
-        };
-      } else {
-        //end of booklet
-        //restart for testing
-        return { act: 0, scene: 0, para: 0, sent: 0, word: 0 };
-      }
     }
   },
   created() {
@@ -255,8 +189,7 @@ export default {
   margin: 40%
   font-size: 3rem
 #controls
-  background-color: #343a40
-  padding: 2%
   position: fixed
-  bottom: 5%
+  bottom: 0
+  width: 100%
 </style>
