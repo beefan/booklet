@@ -17,10 +17,10 @@
 </template>
 
 <script>
-import NavSlider from '../components/navSlider.vue'
+import NavSlider from "../components/navSlider.vue";
 export default {
   components: {
-    'nav-slider': NavSlider
+    "nav-slider": NavSlider
   },
   data() {
     return {
@@ -38,14 +38,14 @@ export default {
     },
     prev() {
       this.change();
-      this.$store.commit('prevPage')
+      this.$store.commit("prevPage");
     },
     next() {
       this.change();
-      this.$store.commit('nextPage')
+      this.$store.commit("nextPage");
     },
     setWord(word) {
-      this.$store.commit('setWord', word)
+      this.$store.commit("setWord", word);
     },
     controlFlow() {
       this.going = !this.going;
@@ -77,7 +77,9 @@ export default {
           new Promise(resolve => setTimeout(resolve, v.pause));
 
         let focusWord = word => {
-          if (!v.arraysEqual(words, v.sceneText.split(" "))) { v.change() }
+          if (!v.arraysEqual(words, v.sceneText.split(" "))) {
+            v.change();
+          }
 
           timeFunc().then(() => {
             v.setWord(word);
@@ -87,12 +89,12 @@ export default {
             );
             if (!v.going) {
               return;
-            }else if (word + 1 < words.length) {
-              if (!v.changed){
+            } else if (word + 1 < words.length) {
+              if (!v.changed) {
                 focusWord(word + 1);
-              }else {
+              } else {
                 v.changed = false;
-                v.setWord(0)
+                v.setWord(0);
                 v.updateCanvas();
               }
             } else {
@@ -108,15 +110,16 @@ export default {
     },
     arraysEqual(a, b) {
       let result = true;
-      a.forEach( (val, index) => {
+      a.forEach((val, index) => {
         if (val !== b[index]) {
           result = false;
         }
-        })
+      });
       return result;
     },
     showPagePause() {
-      document.getElementById("stage").innerHTML = '<b-icon-circle-half id="pause-it" />';
+      document.getElementById("stage").innerHTML =
+        '<b-icon-circle-half id="pause-it" />';
       return new Promise(resolve => setTimeout(resolve, this.pause * 4));
     },
     createPageElement(words, i) {
@@ -198,4 +201,6 @@ export default {
   position: fixed
   bottom: 0
   width: 100%
+  margin-left: 2%
+  margin-right: 2%
 </style>
