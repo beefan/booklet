@@ -3,6 +3,15 @@
     b-row#create-header
       b-col(xs="8") {{ booklet.title }}
       b-col(xs="4") {{ booklet.author }}
+    b-row#create-footer
+      b-col.clickable(xs="6") 
+        b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
+      b-col.clickable(xs="6") 
+        b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
+    b-row(v-if="showFormatHelp") 
+      b-table(striped hover :items="formattingHelp" head-variant="dark" small bordered)
+    b-row(v-if="showPasteBox")
+      b-form-textarea
     b-form-group(v-for="(scene, index) in booklet.scenes" 
     :description="`highlight-color: ${scene.format.hltColor ? scene.format.hltColor : 'default'} | speed: ${scene.format.speed ? scene.format.speed : 'default'}`"
     )
@@ -14,12 +23,22 @@
       :formatter="formatScene"
       :style="`${scene.format.color ? 'color: ' + scene.format.color : ''}${scene.format.bgColor ? ' background: ' + scene.format.bgColor : ''}`"
       )
+
 </template>
 
 <script>
 export default {
   data() {
     return {
+      formattingHelp: [{command: '!/ /', action: 'resets formatting'}, 
+                      {command: '!/booklet-title=text/', action: 'sets booklet title to text'},
+                      {command: '!/color=[valid css color]/', action: 'sets scene color'},
+                      {command: '!/hlt-color=[valid css color]/', action: 'sets scene highlight color'},
+                      {command: '!/bg-color=[valid css color]/', action: 'sets scene background color'},
+                      {command: '!/n/', action: 'creates new scene and focuses'},
+                      {command: '!/del/', action: 'deletes focused scene'}],
+      showFormatHelp: false,
+      showPasteBox: false,
       scene: {
         title: '',
         text: '',
@@ -40,6 +59,9 @@ export default {
   methods: {
     newScene() {
       this.booklet.scenes.push({});
+    },
+    processPaste() {
+      this.showPasteBox = !this.showPasteBox
     },
     formatScene(value, e) {
       let n = value.split('\n')
@@ -121,20 +143,23 @@ export default {
       return true;
     },
 
-  },
-  created() {
-    // this.bookletText = "!/title=" +
-    //                    "\n!/author=" +
-    //                    "\n" +
-    //                    "\n!/title=Intro, color=red, bg-color=black" +
-    //                    "\n" + 
-    //                    "\n!/title=Scene 1, speed=slower" + 
-    //                    "\n" +
-    //                    "\n!/" + 
-    //                    "\nseparates scene, but with default options";
   }
 }
 </script>
 
 <style lang="sass">
+#create-footer
+  .clickable
+    padding: 2px
+  button
+    width: 100%
+    color: white
+    font-size: .8rem
+    padding: 0
+
+#syntax-playground
+  table
+    text-align: left
+    margin-left: 3%
+    font-size: .9rem
 </style>
