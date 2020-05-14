@@ -12,9 +12,7 @@
       b-table(striped hover :items="formattingHelp" head-variant="dark" small bordered)
     b-row(v-if="showPasteBox")
       b-form-textarea#paste-box
-    b-form-group(v-for="(scene, index) in booklet.scenes" 
-    :description="`highlight-color: ${scene.format.hltColor ? scene.format.hltColor : 'default'} | speed: ${scene.format.speed ? scene.format.speed : 'default'}`"
-    )
+    b-form-group(v-for="(scene, index) in booklet.scenes")
       label {{ scene.title }}
       b-form-textarea.booklet-create(
       :id="`scene:${index}`"
@@ -23,6 +21,10 @@
       :formatter="formatScene"
       :style="{color: scene.format.color, backgroundColor: scene.format.bgColor}"
       )
+      b-row
+        b-col#format-desc(sm="8") {{ `highlight-color: ${scene.format.hltColor ? scene.format.hltColor : 'default'} | speed: ${scene.format.speed ? scene.format.speed : 'default'}` }}
+        b-col(sm="4")
+          b-button(variant="success") run
 
 </template>
 
@@ -109,7 +111,7 @@ export default {
       return scene
     },
     isCommand(str) {
-      return (str.substring(0,2) === '!/' && str.substring(str.length - 1) === '/')
+      return (str.substring(0,2) === '!/' && str.substring(str.length - 1) === '/' && str.length > 3)
     },
     getCommand(str) {
       return str.substring(2, str.length - 1)
@@ -183,8 +185,9 @@ export default {
         case 'n':
           console.log('n')
           this.booklet.scenes.splice(sceneI + 1, 0, {text:'', title:'', format:{}})
-          console.log('id ' + sceneI + 1)
-          document.getElementById(`scene:${Number(sceneI + 1)}`).focus()
+          new Promise(resolve => setTimeout(resolve, 250)).then(()=> {
+            document.getElementById(`scene:${Number(sceneI) + 1}`).focus()
+          })          
           break;
         default:
           console.log('dft cmd')
@@ -193,12 +196,6 @@ export default {
 
       return true;
     },
-  computed: {
-    sceneStyle() {
-      return 'color: white';
-      //return 
-    },
-  }
   }
 }
 </script>
@@ -207,15 +204,18 @@ export default {
 #create-footer
   .clickable
     padding: 2px
-  button
-    width: 100%
-    color: white
-    font-size: .8rem
-    padding: 0
 
 #syntax-playground
   table
     text-align: left
     margin-left: 3%
     font-size: .9rem
+  button
+    width: 100%
+    color: white
+    font-size: .8rem
+    padding: 0
+#format-desc
+  color: grey
+  font-size: .7rem
 </style>
