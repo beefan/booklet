@@ -13,7 +13,8 @@ const store = new Vuex.Store({
       // (?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/)
       // below solution does not handle p.m. Mr. i.e. ... in sentence
       // look behinds don't work in javascript?
-      return scene.match(/[^.?!]+[.!?]+[\])'"`’”]*/g);
+      let sentences = scene.match(/[^.?!]+[.!?]+[\])'"`’”]*/g);
+      return sentences ? sentences : [scene];
     }
   },
   getters: {

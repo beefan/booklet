@@ -64,9 +64,9 @@ export default {
       let pages = [];
       let sn = 0;
       let st = 0;
-
-      let scenes = v.scenes
-      scenes.forEach((scene, index) => {
+      console.log('pages')
+      console.log(v.scenes)
+      v.scenes.forEach((scene, index) => {
         sn = index;
         let sents = v.$store.state.splitP(scene.text)
         sents.forEach((sent, index) => {
