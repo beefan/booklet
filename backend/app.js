@@ -1,10 +1,17 @@
 const express = require('express')
 const cors = require('cors')
 
+// MongoDB set up information
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const url = "mongodb://localhost:27017";
+const dbName = 'booklets';
+const client = new MongoClient(url, { useUnifiedTopology: true });
+
 const app = express()
 const port = 8080
-const bookletPath = 'ex-booklets/goldman-individual-society-and-the-state.pdf'
-//const bookletPath = 'ex-booklets/psychedelic-miracle.pdf'
+//const bookletPath = 'ex-booklets/goldman-individual-society-and-the-state.pdf'
+const bookletPath = 'ex-booklets/psychedelic-miracle.pdf'
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:4000");
@@ -17,7 +24,15 @@ app.use(function (req, res, next) {
 });
 
 app.get('/', (req, res) => {
-  getBookletFromPDF(bookletPath).then( booklet => res.send(booklet));
+  // connect to mongodb client and send first booklet
+  client.connect(err => {
+    console.log('successfully connected via ext api call')
+    const db = client.db(dbName);
+    findBookletById(db, (docs) => {
+      res.send(docs[1]);
+      client.close();
+    });
+  })
 });
 
 app.use(cors())
@@ -26,42 +41,46 @@ app.listen(port, () => {
   console.log(`booklet listening for requests at http://localhost:${port}`);
 });
 
-function getBooklet() {
-  let booklet = {}
-
-  let acts = []
-  let exAct = []
-  let exScene = []
-  let exPara = []
-  let exSentence = "example lorem ipsum example lorem ipsum example lorem ipsum."
-
-  //10 example sentence in paragraph
-  for (let i = 0; i < 10; i++) {
-    exPara.push(i + " " + exSentence);
-  }
-
-  //5 example paragraph in scene
-  for (let i = 0; i < 5; i++) {
-    exScene.push(exPara);
-  }
-
-  //6 example scenes in act
-  for (let i = 0; i < 6; i++) {
-    exAct.push(exScene);
-  }
-
-  //4 example acts in acts
-  for (let i = 0; i < 4; i++) {
-    acts.push(exAct);
-  }
-
-  booklet.acts = acts;
-  booklet.title = 'Test Title'
-  booklet.author = 'Behtoven'
-
-  return booklet;
+function findBookletById(db, callback) {
+  const collection = db.collection('documents');
+  collection.find({}).toArray((err, docs) => {
+    console.log("found the following records");
+    console.log(docs)
+    callback(docs);
+  })
 }
+/*****************************************
+ * ******** insert pdf as booklet ********
+ * ***************************************
+ */
+// client.connect((err) => {
+//   console.log("Connected successfully to server");
 
+//   const db = client.db(dbName);
+
+//   insertPDF(db, function() {
+//     client.close();
+//   });
+// });
+
+/**
+ * 
+ * @param {*} db 
+ * @param {*} callback 
+ */
+function insertPDF(db, callback) {
+  const collection = db.collection('documents');
+  getBookletFromPDF(bookletPath).then( booklet => {
+    collection.insertOne(booklet, function(err,result){
+      console.log("inserted booklet");
+      callback(result);
+    });
+  });
+}
+/**
+ * 
+ * @param {*} path 
+ */
 async function getBookletFromPDF(path) {
   const fs = require('fs');
   const pdf = require('pdf-parse');
@@ -71,10 +90,12 @@ async function getBookletFromPDF(path) {
     return createBookletFromPDFData(data)
   });
 }
-
+/**
+ * 
+ * @param {*} data 
+ */
 function createBookletFromPDFData(data) {
   let booklet = {}
-  booklet.id = 123;
   booklet.title = data.info.Title;
   booklet.author = data.info.Author;
   let scenes = [];
@@ -99,9 +120,6 @@ function createBookletFromPDFData(data) {
 
   //split paragraphs into sentence arrays
   paragraphs = textArr.join(' ').split(pMarker);
-  // paragraphs = paragraphs.map( p => {
-  //   return p.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
-  // });
 
   //put paragraphs into scenes
   for (let i = 0; i < paragraphs.length; i++) {
