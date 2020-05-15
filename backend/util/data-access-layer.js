@@ -34,6 +34,21 @@ function findBookletById(db, callback) {
   })
 }
 
+const saveBooklet = booklet => {
+  client.connect(err => {
+    const db = client.db(dbName);
+    insertBooklet(booklet, db, () => client.close());
+  });
+} 
+
+function insertBooklet(booklet, db, callback) {
+  const collection = db.collection('documents');
+  collection.insertOne(booklet, (err, res) => {
+    console.log('inserted booklet by api');
+    callback(res);
+  })
+}
+
 const insertSampleData = () => {
   client.connect((err) => {
     const db = client.db(dbName);
@@ -55,3 +70,4 @@ function insertPDF(db, callback) {
 
 exports.getBookletById = getBookletById;
 exports.insertSampleData = insertSampleData;
+exports.saveBooklet = saveBooklet;

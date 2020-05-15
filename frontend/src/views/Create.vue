@@ -60,9 +60,10 @@ export default {
   },
   methods: {
     loadBooklet(i) {
+      this.$store.dispatch('saveBooklet', this.booklet)
       this.$store.commit('setBooklet', this.booklet)
       this.$store.commit('navigate', {sent: 0, scene: i})
-      this.$router.push('/')
+      //this.$router.push('/')
     },
     newScene() {
       this.booklet.scenes.push({});

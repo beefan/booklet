@@ -16,3 +16,24 @@ export async function getBooklet(id) {
       console.error(err);
     });
 }
+
+export async function saveBooklet(booklet) {
+  const route = `${api}/save`;
+  console.log("saving booklet");
+  console.log(booklet);
+  fetch(route, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(booklet)
+  })
+    .then(response => {
+      if (response.ok) {
+        console.log("successfully uploaded booklet");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}

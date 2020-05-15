@@ -91,6 +91,9 @@ const store = new Vuex.Store({
       apis.getBooklet(payload.id).then(res => {
         vm.commit("setBooklet", res);
       });
+    },
+    saveBooklet(state, payload) {
+      apis.saveBooklet(payload);
     }
   }
 });
