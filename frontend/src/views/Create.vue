@@ -24,7 +24,7 @@
       b-row
         b-col#format-desc(sm="8") {{ `highlight-color: ${scene.format.hltColor ? scene.format.hltColor : 'default'} | speed: ${scene.format.speed ? scene.format.speed : 'default'}` }}
         b-col(sm="4")
-          b-button(variant="success") run
+          b-button(variant="success" @click="loadBooklet(index)") run
 
 </template>
 
@@ -59,6 +59,11 @@ export default {
     }
   },
   methods: {
+    loadBooklet(i) {
+      this.$store.commit('setBooklet', this.booklet)
+      this.$store.commit('navigate', {sent: 0, scene: i})
+      this.$router.push('/')
+    },
     newScene() {
       this.booklet.scenes.push({});
     },

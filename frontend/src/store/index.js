@@ -79,7 +79,7 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    async updateBooklet(state, payload) {
+    async loadBooklet(state, payload) {
       const vm = this;
       apis.getBooklet(payload.id).then(res => {
         vm.commit("setBooklet", res);

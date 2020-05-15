@@ -181,7 +181,9 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch('updateBooklet', {id: 4})
+    if (!this.scenes) {
+      this.$store.dispatch('loadBooklet', {id: 4})
+    }
   }
 };
 </script>
