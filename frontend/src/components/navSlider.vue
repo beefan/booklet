@@ -35,10 +35,6 @@ export default {
         return `Scene: ${s + 1} - ${page.text}`;
       }
       return page.text;
-    },
-    splitSentences(scene) {
-      //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
-      return scene.split('.')
     }
   },
   computed: {
@@ -72,7 +68,7 @@ export default {
       let scenes = v.scenes
       scenes.forEach((scene, index) => {
         sn = index;
-        let sents = v.splitSentences(scene.text)
+        let sents = v.$store.state.splitP(scene.text)
         sents.forEach((sent, index) => {
           st = index;
           let id = `${sn}${st}`;

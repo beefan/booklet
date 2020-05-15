@@ -148,11 +148,6 @@ export default {
         "</span> " +
         backString;
       return sceneText;
-    },
-    splitToSentences(scene){
-      //console.log('issues here in Booklet')
-      //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
-      return scene.split('.')
     }
   },
   computed: {
@@ -176,7 +171,7 @@ export default {
         return "";
       }
       const scene = this.scenes[this.curr.scene].text;
-      const sentences = this.splitToSentences(scene);
+      const sentences = this.$store.state.splitP(scene);
       return sentences[this.curr.sent];
     },
   },

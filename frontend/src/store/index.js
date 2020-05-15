@@ -3,12 +3,18 @@ import Vuex from "vuex";
 const apis = require("./apis.js");
 
 Vue.use(Vuex);
-
+//return ;
 const store = new Vuex.Store({
   state: {
     booklet: [],
     isReading: false,
-    curr: { scene: 0, sent: 0, word: 0 }
+    curr: { scene: 0, sent: 0, word: 0 },
+    splitP: function(scene) {
+      // (?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/)
+      // below solution does not handle p.m. Mr. i.e. ... in sentence
+      // look behinds don't work in javascript?
+      return scene.match(/[^.?!]+[.!?]+[\])'"`’”]*/g);
+    }
   },
   getters: {
     getBooklet: state => {
@@ -42,7 +48,7 @@ const store = new Vuex.Store({
       let totalScenes = state.booklet.scenes.length - 1;
       let thisScene = state.booklet.scenes[state.curr.scene];
 
-      let sentInScene = toSentences(thisScene).length - 1;
+      let sentInScene = state.splitP(thisScene.text).length - 1;
 
       if (state.curr.sent < sentInScene) {
         state.curr = {
@@ -87,10 +93,5 @@ const store = new Vuex.Store({
     }
   }
 });
-
-const toSentences = scene => {
-  //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
-  return scene.text.split(".");
-};
 
 export default store;
