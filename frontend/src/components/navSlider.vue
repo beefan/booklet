@@ -13,8 +13,8 @@ export default {
     },
     setPage(page) {
       this.$store.commit("navigate", {
-        scene: Number(page.id.substring(0, 1)),
-        sent: Number(page.id.substring(1, 2))
+        scene: Number(page.id.substring(2)),
+        sent: 0
       });
       this.scrollTo(this.current);
     },
@@ -28,13 +28,8 @@ export default {
       }
     },
     renderPage(page) {
-      let s = Number(page.id.substring(0, 1));
-      let se = Number(page.id.substring(1, 2));
-
-      if (s === 0 && se === 0) {
-        return `Scene: ${s + 1} - ${page.text}`;
-      }
-      return page.text;
+      let s = Number(page.id.substring(2));
+      return `Scene: ${s + 1} - ${page.text}`;
     }
   },
   computed: {
@@ -46,7 +41,7 @@ export default {
       if (!v.index) {
         return "00";
       }
-      let curr = `${v.index.scene}${v.index.sent}`;
+      let curr = `SN${v.index.scene}`;
       v.scrollTo(curr);
       return curr;
     },
@@ -62,18 +57,19 @@ export default {
         return [];
       }
       let pages = [];
-      let sn = 0;
-      let st = 0;
-      console.log('pages')
-      console.log(v.scenes)
+      // let sn = 0;
+      // let st = 0;
+      // console.log('pages')
+      // console.log(v.scenes)
       v.scenes.forEach((scene, index) => {
-        sn = index;
-        let sents = v.$store.state.splitP(scene.text)
-        sents.forEach((sent, index) => {
-          st = index;
-          let id = `${sn}${st}`;
-          pages.push({ id: id, text: sent });
-        });
+        pages.push({ id: `SN${index}`, text: scene.text })
+        // sn = index;
+        // let sents = v.$store.state.splitP(scene.text)
+        // sents.forEach((sent, index) => {
+        //   st = index;
+        //   let id = `Scene:${sn}`;
+        //   pages.push({ id: id, text: scene.text });
+        // });
       });
       return pages;
     }
