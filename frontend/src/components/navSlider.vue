@@ -13,10 +13,8 @@ export default {
     },
     setPage(page) {
       this.$store.commit("navigate", {
-        act: Number(page.id.substring(0, 1)),
-        scene: Number(page.id.substring(1, 2)),
-        para: Number(page.id.substring(2, 3)),
-        sent: Number(page.id.substring(3, 4))
+        scene: Number(page.id.substring(0, 1)),
+        sent: Number(page.id.substring(1, 2))
       });
       this.scrollTo(this.current);
     },
@@ -30,15 +28,17 @@ export default {
       }
     },
     renderPage(page) {
-      let a = Number(page.id.substring(0, 1));
-      let s = Number(page.id.substring(1, 2));
-      let p = Number(page.id.substring(2, 3));
-      let se = Number(page.id.substring(3, 4));
+      let s = Number(page.id.substring(0, 1));
+      let se = Number(page.id.substring(1, 2));
 
-      if (p === 0 && se === 0) {
-        return `Act: ${a + 1}, Scene: ${s + 1} - ${page.text}`;
+      if (s === 0 && se === 0) {
+        return `Scene: ${s + 1} - ${page.text}`;
       }
       return page.text;
+    },
+    splitSentences(scene) {
+      //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
+      return scene.split('.')
     }
   },
   computed: {
@@ -48,41 +48,35 @@ export default {
     current() {
       let v = this;
       if (!v.index) {
-        return "0000";
+        return "00";
       }
-      let curr = `${v.index.act}${v.index.scene}${v.index.para}${v.index.sent}`;
+      let curr = `${v.index.scene}${v.index.sent}`;
       v.scrollTo(curr);
       return curr;
     },
     isReading() {
       return this.$store.state.isReading;
     },
-    acts() {
-      return this.$store.state.booklet.acts;
+    scenes() {
+      return this.$store.state.booklet.scenes;
     },
     pages() {
       let v = this;
-      if (!v.acts) {
+      if (!v.scenes) {
         return [];
       }
       let pages = [];
-      let ac = 0;
       let sn = 0;
-      let pr = 0;
       let st = 0;
 
-      v.acts.forEach((act, index) => {
-        ac = index;
-        act.forEach((scene, index) => {
-          sn = index;
-          scene.forEach((para, index) => {
-            pr = index;
-            para.forEach((sent, index) => {
-              st = index;
-              let id = `${ac}${sn}${pr}${st}`;
-              pages.push({ id: id, text: sent });
-            });
-          });
+      let scenes = v.scenes
+      scenes.forEach((scene, index) => {
+        sn = index;
+        let sents = v.splitSentences(scene.text)
+        sents.forEach((sent, index) => {
+          st = index;
+          let id = `${sn}${st}`;
+          pages.push({ id: id, text: sent });
         });
       });
       return pages;

@@ -8,7 +8,7 @@ const store = new Vuex.Store({
   state: {
     booklet: [],
     isReading: false,
-    curr: { act: 0, scene: 0, para: 0, sent: 0, word: 0 }
+    curr: { scene: 0, sent: 0, word: 0 }
   },
   getters: {
     getBooklet: state => {
@@ -24,9 +24,7 @@ const store = new Vuex.Store({
   mutations: {
     navigate(state, payload) {
       state.curr = {
-        act: payload.act,
         scene: payload.scene,
-        para: payload.para,
         sent: payload.sent,
         word: 0
       };
@@ -41,88 +39,42 @@ const store = new Vuex.Store({
       state.curr.word = word;
     },
     nextPage(state) {
-      let totalActs = state.booklet.acts.length - 1;
-      let thisAct = state.booklet.acts[state.curr.act];
+      let totalScenes = state.booklet.scenes.length - 1;
+      let thisScene = state.booklet.scenes[state.curr.scene];
 
-      let scenesInAct = thisAct.length - 1;
-      let thisScene = thisAct[state.curr.scene];
+      let sentInScene = toSentences(thisScene).length - 1;
 
-      let paraInScene = thisScene.length - 1;
-      let thisPara = thisScene[state.curr.para];
-
-      let sentsInPara = thisPara.length - 1;
-
-      if (state.curr.sent + 1 <= sentsInPara) {
+      if (state.curr.sent < sentInScene) {
         state.curr = {
-          act: state.curr.act,
           scene: state.curr.scene,
-          para: state.curr.para,
           sent: state.curr.sent + 1,
           word: 0
         };
-      } else if (state.curr.para + 1 <= paraInScene) {
+      } else if (state.curr.scene < totalScenes) {
         state.curr = {
-          act: state.curr.act,
-          scene: state.curr.scene,
-          para: state.curr.para + 1,
-          sent: 0,
-          word: 0
-        };
-      } else if (state.curr.scene + 1 <= scenesInAct) {
-        state.curr = {
-          act: state.curr.act,
           scene: state.curr.scene + 1,
-          para: 0,
-          sent: 0,
-          word: 0
-        };
-      } else if (state.curr.act + 1 <= totalActs) {
-        state.curr = {
-          act: state.curr.act + 1,
-          scene: 0,
-          para: 0,
           sent: 0,
           word: 0
         };
       } else {
-        state.curr = { act: 0, scene: 0, para: 0, sent: 0, word: 0 };
+        state.curr = { scene: 0, sent: 0, word: 0 };
       }
     },
     prevPage(state) {
       if (state.curr.sent - 1 >= 0) {
         state.curr = {
-          act: state.curr.act,
           scene: state.curr.scene,
-          para: state.curr.para,
           sent: state.curr.sent - 1,
-          word: 0
-        };
-      } else if (state.curr.para - 1 >= 0) {
-        state.curr = {
-          act: state.curr.act,
-          scene: state.curr.scene,
-          para: state.curr.para - 1,
-          sent: 0,
           word: 0
         };
       } else if (state.curr.scene - 1 >= 0) {
         state.curr = {
-          act: state.curr.act,
           scene: state.curr.scene - 1,
-          para: 0,
-          sent: 0,
-          word: 0
-        };
-      } else if (state.curr.act - 1 >= 0) {
-        state.curr = {
-          act: state.curr.act - 1,
-          scene: 0,
-          para: 0,
           sent: 0,
           word: 0
         };
       } else {
-        state.curr = { act: 0, scene: 0, para: 0, sent: 0, word: 0 };
+        state.curr = { scene: 0, sent: 0, word: 0 };
       }
     }
   },
@@ -135,5 +87,10 @@ const store = new Vuex.Store({
     }
   }
 });
+
+const toSentences = scene => {
+  //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
+  return scene.text.split(".");
+};
 
 export default store;

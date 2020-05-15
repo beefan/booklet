@@ -74,12 +74,10 @@ async function getBookletFromPDF(path) {
 
 function createBookletFromPDFData(data) {
   let booklet = {}
+  booklet.id = 123;
   booklet.title = data.info.Title;
   booklet.author = data.info.Author;
-  let paragraphs = [];
-  let acts = [];
-  let act = [];
-  let scene = [];
+  let scenes = [];
   let textArr = data.text.split("\n");
   const punc = '."!?'
   const pMarker = "pxxx-xxx"
@@ -101,29 +99,26 @@ function createBookletFromPDFData(data) {
 
   //split paragraphs into sentence arrays
   paragraphs = textArr.join(' ').split(pMarker);
-  paragraphs = paragraphs.map( p => {
-    return p.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
-  });
+  // paragraphs = paragraphs.map( p => {
+  //   return p.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
+  // });
 
-  //put paragraphs into scenes and acts
-  //arbitrarily (for now)
+  //put paragraphs into scenes
   for (let i = 0; i < paragraphs.length; i++) {
-    scene.push(paragraphs[i]);
-    
-    //scenes are 5 paragraphs
-    if ((i + 1) % 5 == 0 || i == paragraphs.length-1) {
-      act.push(scene);
-      scene = [];
+    const scene =  {
+      title: paragraphs[i].substring(0, 9),
+      text: paragraphs[i],
+      format: {
+        color: '',
+        hltColor: '',
+        bgColor: '',
+        speed: ''
+      }
     }
-
-    //acts are 25 paragraphs
-    if ((i + 1) % 25 == 0 || i == paragraphs.length-1) {
-      acts.push(act);
-      act = [];
-    }
+    scenes.push(scene);
   }
 
-  booklet.acts = acts;
+  booklet.scenes = scenes;
 
   return booklet;
 }

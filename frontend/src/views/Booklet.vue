@@ -25,11 +25,9 @@ export default {
   data() {
     return {
       going: false,
+      changed: false,
       timing: 1,
-      wait: 250,
-      word: "begin",
-      page: "begin the first page",
-      changed: false
+      wait: 250
     };
   },
   methods: {
@@ -55,33 +53,39 @@ export default {
     },
     updateCanvas() {
       //end of booklet
-      if (this.curr.act < 0) {
+      if (this.curr.scene < 0) {
         //visually notify and return
         this.page = "end";
         return;
       }
 
-      if (this.curr.para == 0 && this.curr.sent == 0 && this.curr.word == 0) {
+      //if the first word of new page, pause for a time.
+      if (this.curr.word == 0) {
         this.showPagePause().then(() => this.runThroughSentence());
       } else {
         this.runThroughSentence();
       }
+
+      // if this is the first word of a new scene
+      // we should just pause and let the user click 
+      // the next. Or, they can turn on autoplay.
+      // TODO ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
     },
     runThroughSentence() {
       let v = this;
 
       if (v.going) {
-        let words = v.sceneText.split(" ");
+        let words = v.pageText.split(" ");
 
-        let timeFunc = () =>
+        const timer = () =>
           new Promise(resolve => setTimeout(resolve, v.pause));
 
-        let focusWord = word => {
-          if (!v.arraysEqual(words, v.sceneText.split(" "))) {
+        const focusWord = word => {
+          if (!v.arraysEqual(words, v.pageText.split(" "))) {
             v.change();
           }
 
-          timeFunc().then(() => {
+          timer().then(() => {
             v.setWord(word);
             document.getElementById("stage").innerHTML = v.createPageElement(
               words,
@@ -120,7 +124,7 @@ export default {
     showPagePause() {
       document.getElementById("stage").innerHTML =
         '<b-icon-circle-half id="pause-it" />';
-      return new Promise(resolve => setTimeout(resolve, this.pause * 4));
+      return new Promise(resolve => setTimeout(resolve, this.pause));
     },
     createPageElement(words, i) {
       let frontString = words
@@ -144,6 +148,11 @@ export default {
         "</span> " +
         backString;
       return sceneText;
+    },
+    splitToSentences(scene){
+      //console.log('issues here in Booklet')
+      //return scene.text.split(/(?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/);
+      return scene.split('.')
     }
   },
   computed: {
@@ -156,24 +165,23 @@ export default {
     author() {
       return this.$store.state.booklet.author;
     },
-    acts() {
-      return this.$store.state.booklet.acts;
+    scenes() {
+      return this.$store.state.booklet.scenes;
     },
     pause() {
       return this.timing * this.wait;
     },
-    sceneText() {
-      if (this.curr.act < 0) {
+    pageText() {
+      if (this.curr.scene < 0) {
         return "";
       }
-      let sentence = this.acts[this.curr.act][this.curr.scene][this.curr.para][
-        this.curr.sent
-      ];
-      return sentence;
-    }
+      const scene = this.scenes[this.curr.scene].text;
+      const sentences = this.splitToSentences(scene);
+      return sentences[this.curr.sent];
+    },
   },
   created() {
-    this.$store.dispatch("updateBooklet", { id: 4 });
+    this.$store.dispatch('updateBooklet', {id: 4})
   }
 };
 </script>

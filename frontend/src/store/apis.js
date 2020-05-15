@@ -7,6 +7,8 @@ export async function getBooklet(id) {
       return response.json();
     })
     .then(data => {
+      console.log("incoming!!");
+      console.log(data);
       return data;
     })
     .catch(err => {
