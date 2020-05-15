@@ -1,8 +1,9 @@
 const api = process.env.VUE_APP_API;
 
 export async function getBooklet(id) {
-  console.log("calling fetch for booklet id " + id);
-  return fetch(api)
+  const route = `${api}/${id}`;
+  console.log("contacting" + route + " for booklet id " + id);
+  return fetch(route)
     .then(response => {
       return response.json();
     })
