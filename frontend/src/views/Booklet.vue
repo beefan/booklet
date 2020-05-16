@@ -13,7 +13,6 @@
           b-icon-pause-fill(v-if="going")
           b-icon-play(v-if="!going")
     nav-slider
-
 </template>
 
 <script>
@@ -27,7 +26,19 @@ export default {
       going: false,
       changed: false,
       timing: 1,
-      wait: 250
+      wait: 250,
+      format: {
+          color: '#2c3e50',
+          hltColor: 'yellow',
+          bgColor: 'white',
+          speed: 'normal' // slower, slow, fast, faster (also possible)
+        },
+      defaultFormat: {
+          color: '#2c3e50',
+          hltColor: 'yellow',
+          bgColor: 'white',
+          speed: 'normal' // slower, slow, fast, faster (also possible)
+        }
     };
   },
   methods: {
@@ -122,11 +133,13 @@ export default {
       return result;
     },
     showPagePause() {
-      document.getElementById("stage").innerHTML =
-        '<b-icon-circle-half id="pause-it" />';
+      document.getElementById("stage").innerHTML = "<div id='pause-it'> . . . </div>";
       return new Promise(resolve => setTimeout(resolve, this.pause));
     },
     createPageElement(words, i) {
+      const scene = this.scenes[this.curr.scene];
+      this.setThisFormat(scene.format);
+
       let frontString = words
         .filter((value, index) => {
           if (index < i) {
@@ -141,13 +154,19 @@ export default {
           }
         })
         .join(" ");
-      let sceneText =
-        frontString +
-        ' <span class="highlighted-word">' +
-        words[i] +
-        "</span> " +
-        backString;
-      return sceneText;
+     return  `<p style="color:${this.format.color}; background-color:${this.format.bgColor}"> 
+                ${frontString} 
+                <span style="background-color:${this.format.hltColor}">
+                  ${words[i]}
+                </span> 
+                ${backString}
+                </p>`;
+    },
+    setThisFormat(format) {
+        this.format.color = format.color ? format.color : this.defaultFormat.color;
+        this.format.bgColor = format.bgColor ? format.bgColor : this.defaultFormat.bgColor;
+        this.format.hltColor = format.hltColor ? format.hltColor : this.defaultFormat.hltColor;
+        this.format.speed = format.speed ? format.speed : this.defaultFormat.speed;
     }
   },
   computed: {
@@ -164,14 +183,33 @@ export default {
       return this.$store.state.booklet.scenes;
     },
     pause() {
-      return this.timing * this.wait;
+      let weight = 1;
+      switch(this.format.speed) {
+        case 'slow':
+          weight = .9;
+          break;
+        case 'slower':
+          weight = .8;
+          break;
+        case 'fast':
+          weight = 1.1;
+          break;
+        case 'faster':
+          weight = 1.2;
+          break;
+        case 'normal':
+        default:
+          break;
+      }
+
+      return this.timing * this.wait * weight;
     },
     pageText() {
       if (this.curr.scene < 0) {
         return "";
       }
-      const scene = this.scenes[this.curr.scene].text;
-      const sentences = this.$store.state.splitP(scene);
+      const scene = this.scenes[this.curr.scene];
+      const sentences = this.$store.state.splitP(scene.text);
       return sentences[this.curr.sent];
     },
   },
