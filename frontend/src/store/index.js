@@ -6,6 +6,9 @@ Vue.use(Vuex);
 //return ;
 const store = new Vuex.Store({
   state: {
+    userId: 1,
+    userLikes: [],
+    userBooklets: [],
     booklet: {},
     editBooklet: {},
     isReading: false,
@@ -30,6 +33,12 @@ const store = new Vuex.Store({
     },
     getEditBooklet: state => {
       return state.editBooklet;
+    },
+    getUserLikes: state => {
+      return state.userLikes;
+    },
+    getUserBooklets: state => {
+      return state.userBooklets;
     }
   },
   mutations: {
@@ -49,6 +58,12 @@ const store = new Vuex.Store({
     setEditBooklet(state, payload) {
       console.log("set edit booklet");
       state.editBooklet = payload;
+    },
+    setUserBooklets(state, payload) {
+      state.userBooklets = payload;
+    },
+    setUserLikes(state, payload) {
+      state.userLikes = payload;
     },
     setWord(state, word) {
       state.curr.word = word;
@@ -102,6 +117,16 @@ const store = new Vuex.Store({
     },
     saveBooklet(state, payload) {
       apis.saveBooklet(payload);
+    },
+    async loadUserData(state) {
+      const vm = this;
+      console.log(state.userId);
+      apis.getUserLikes(4).then(res => {
+        vm.commit("setUserLikes", res);
+      });
+      apis.getUserBooklets(4).then(res => {
+        vm.commit("setUserBooklets", res);
+      });
     }
   }
 });

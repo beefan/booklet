@@ -37,3 +37,40 @@ export async function saveBooklet(booklet) {
       console.error(err);
     });
 }
+// copy of above getter for now.
+// update once server / mongodb updated
+export async function getUserLikes(userId) {
+  const route = `${api}/${userId}`;
+  console.log("contacting" + route + " for booklet id " + userId);
+  return fetch(route)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log("incoming!!");
+      console.log(data);
+      return [data];
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}
+// copy of above getter for now.
+// update once server / mongodb updated
+export async function getUserBooklets(userId) {
+  console.log(userId);
+  const route = `${api}/${userId}`;
+  console.log("contacting" + route + " for booklet id " + userId);
+  return fetch(route)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log("incoming!!");
+      console.log(data);
+      return [data];
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}

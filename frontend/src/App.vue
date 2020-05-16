@@ -8,6 +8,7 @@
           b-navbar-nav
             b-nav-item(:to="{path: '/'}") Booklet 
             b-nav-item(:to="{path: '/create-new'}") Create
+            b-nav-item(:to="{path: '/user'}") User
     router-view
 </template>
 
