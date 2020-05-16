@@ -18,7 +18,7 @@
       b-table(striped hover :items="formattingHelp" head-variant="dark" small bordered)
     b-row(v-if="showPasteBox")
       b-form-textarea#paste-box
-    b-form-group(v-for="(scene, index) in booklet.scenes")
+    b-form-group(v-for="(scene, index) in booklet.scenes" v-bind:key="index")
       label {{ scene.title }}
       b-form-textarea.booklet-create(
       :id="`scene:${index}`"
@@ -64,14 +64,25 @@ export default {
       }
     }
   },
+  mounted() {
+    if(this.editBooklet.title) {
+      this.booklet = this.editBooklet;
+    }
+  },
   methods: {
     loadBooklet(i) {
-      this.$store.commit('setBooklet', this.booklet)
-      this.$store.commit('navigate', {sent: 0, scene: i})
-      this.$router.push('/')
+      this.$store.commit('setEditBooklet', this.booklet);
+      const sceneForReplay = {
+                  title: this.booklet.title, 
+                  author: this.booklet.author, 
+                  scenes: [this.booklet.scenes[this.currScene]] };
+      this.$store.commit('setBooklet', sceneForReplay);
+      this.$store.commit('navigate', {sent: 0, scene: i});
+      this.$router.push('/');
     },
     saveBooklet() {
       if (confirm('Save booklet to profile?')) {
+        this.$store.commit('setEditBooklet', this.booklet)
         //this.$store.dispatch('saveBooklet', this.booklet)
         alert('Booklet saved')
       }
@@ -159,7 +170,6 @@ export default {
       let thisScene = this.booklet.scenes[sceneI]
       switch(command) {
         case ' ':
-          console.log('empty command')
           thisScene.format = {
             color: '',
             hltColor: '',
@@ -213,6 +223,14 @@ export default {
 
       return true;
     },
+  },
+  computed: {
+    editBooklet() {
+      return this.$store.state.editBooklet;
+    },
+    currScene() {
+      return this.$store.state.curr.scene;
+    }
   }
 }
 </script>

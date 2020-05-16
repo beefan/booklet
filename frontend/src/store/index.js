@@ -6,7 +6,8 @@ Vue.use(Vuex);
 //return ;
 const store = new Vuex.Store({
   state: {
-    booklet: [],
+    booklet: {},
+    editBooklet: {},
     isReading: false,
     curr: { scene: 0, sent: 0, word: 0 },
     splitP: function(scene) {
@@ -26,6 +27,9 @@ const store = new Vuex.Store({
     },
     isReading: state => {
       return state.isReading;
+    },
+    getEditBooklet: state => {
+      return state.editBooklet;
     }
   },
   mutations: {
@@ -41,6 +45,10 @@ const store = new Vuex.Store({
     },
     setBooklet(state, payload) {
       state.booklet = payload;
+    },
+    setEditBooklet(state, payload) {
+      console.log("set edit booklet");
+      state.editBooklet = payload;
     },
     setWord(state, word) {
       state.curr.word = word;
