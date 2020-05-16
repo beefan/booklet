@@ -1,10 +1,16 @@
 <template lang="pug">
   div#syntax-playground
-    b-row#create-footer
-      b-col.clickable(xs="6") 
-        b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp; showPasteBox = false") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
-      b-col.clickable(xs="6") 
-        b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
+    b-button-group#create-buttons(size="lg")
+      b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp; showPasteBox = false") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
+      b-button(variant="dark" @click="saveBooklet()") save booklet
+      b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
+    //- b-row#create-footer
+      //- b-col.clickable(xs="4") 
+      //-   b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp; showPasteBox = false") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
+      //- b-col.clickable(xs="4") 
+      //-   b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
+      //- b-col.clickable(xs="4")
+      //-   b-button(variant="success")
     b-row#create-header
       b-col(xs="8") {{ booklet.title }}
       b-col(xs="4") {{ booklet.author }}
@@ -60,10 +66,15 @@ export default {
   },
   methods: {
     loadBooklet(i) {
-      this.$store.dispatch('saveBooklet', this.booklet)
       this.$store.commit('setBooklet', this.booklet)
       this.$store.commit('navigate', {sent: 0, scene: i})
-      //this.$router.push('/')
+      this.$router.push('/')
+    },
+    saveBooklet() {
+      if (confirm('Save booklet to profile?')) {
+        //this.$store.dispatch('saveBooklet', this.booklet)
+        alert('Booklet saved')
+      }
     },
     newScene() {
       this.booklet.scenes.push({});
@@ -207,9 +218,8 @@ export default {
 </script>
 
 <style lang="sass">
-#create-footer
-  .clickable
-    padding: 2px
+#create-buttons
+  width: 100%
 
 #syntax-playground
   table
