@@ -4,7 +4,7 @@
       div {{ title }}
       div {{ author }} 
     b-row
-      div#stage
+      div#stage . . .
     b-row#controls
       b-col(xs="10")
         b-form-input.speed-range(type="range" v-model="timing" min="0" max="2" step="0.1")
@@ -70,10 +70,9 @@ export default {
         return;
       }
 
-      //if the first word of new page, pause for a time.
-      if (this.curr.word == 0) {
+      if (this.curr.sent === 0) {
         this.showPagePause().then(() => this.runThroughSentence());
-      } else {
+      }else {
         this.runThroughSentence();
       }
 
