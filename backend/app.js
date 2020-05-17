@@ -24,9 +24,7 @@ app.use(bodyParser.json());
  * RANDOM FOR NOW? 
  */
 app.get('/api/v1/:id', (req, res) => {
-  console.log('in server getter')
-  console.log(req.params.id)
-  // connect to mongodb client and send first booklet
+  console.log('get booklet ' + req.params.id)
   dao.getBookletById(req.params.id, res);
 });
 
@@ -34,11 +32,33 @@ app.get('/api/v1/:id', (req, res) => {
  * POST A BOOKLET IN THE MONGODB
  */
 app.post('/api/v1/save', (req, res) => {
-  console.log('in server poster')
-  console.log(req.body)
-  dao.saveBooklet(req.body);
-  res.status(201);
+  console.log('post booklet')
+  dao.saveBooklet(req.body, res);
 });
+
+/**
+ * GET LIKES BY USER ID
+ */
+app.get('/api/v1/likes/:userId', (req, res) => {
+  console.log('get likes for user ' + req.params.userId)
+  dao.getLikesByUserId(req.params.userId, res);
+});
+
+/**
+ * GET BOOKLETS BY USER ID
+ */
+app.get('api/v1/all/:userId', (req, res) => {
+  console.log('get booklets by user ' + req.params.userId)
+  dao.getBookletsByUserId(req.params.userId, res);
+});
+
+/** 
+ * UPLOAD USER PDF AS BOOKLET 
+ */
+app.post('api/v1/pdf/:userId', (req, res) => {
+  console.log('upload booklet as pdf')
+  dao.savePdfAsBooklet(req.body, req.params.userId, res);
+})
 
 /**
  * LISTEN AT 8080

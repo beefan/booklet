@@ -60,7 +60,7 @@ export async function getUserLikes(userId) {
 export async function getUserBooklets(userId) {
   console.log(userId);
   const route = `${api}/${userId}`;
-  console.log("contacting" + route + " for booklet id " + userId);
+  console.log("contacting " + route + " for booklet id " + userId);
   return fetch(route)
     .then(response => {
       return response.json();

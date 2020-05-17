@@ -6,12 +6,13 @@ const bookletPath = 'ex-booklets/psychedelic-miracle.pdf'
  * 
  * @param {*} path 
  */
-async function getBookletFromPDF() {
+async function getBookletFromPDF(pdf) {
   const fs = require('fs');
-  const pdf = require('pdf-parse');
+  const pdfParser = require('pdf-parse');
+  // let dataBuffer = pdf ??? 
   let dataBuffer = fs.readFileSync(bookletPath);
 
-  return pdf(dataBuffer).then(data => {
+  return pdfParser(dataBuffer).then(data => {
     return createBookletFromPDFData(data)
   });
 }
