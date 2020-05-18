@@ -14,11 +14,44 @@ const store = new Vuex.Store({
     isReading: false,
     curr: { scene: 0, sent: 0, word: 0 },
     splitP: function(scene) {
-      // (?<=(?<!p.m|a.m|Dr|Mr|Mrs)[.?!"] )/)
-      // below solution does not handle p.m. Mr. i.e. ... in sentence
-      // look behinds don't work in javascript?
       let sentences = scene.match(/[^.?!]+[.!?]+[\])'"`’”]*/g);
-      return sentences ? sentences : [scene];
+      if (sentences) {
+        // if a sentence ends in a whoopsie, combine it with the next sentence.
+        const whoopsies = [
+          "Mr.",
+          "Dr.",
+          "Ms.",
+          "Mrs.",
+          "p.",
+          "m.",
+          "p.m.",
+          "a.m.",
+          "a.",
+          "P.",
+          "www."
+        ];
+        const priors = ["com"];
+        const result = [];
+
+        sentences.forEach((sent, index) => {
+          const sentArr = sent.split(" ");
+          const lastWord = sentArr[sentArr.length - 1];
+          const firstWord = sentArr[0];
+          if (whoopsies.includes(lastWord)) {
+            console.log("sentence ends in " + lastWord);
+            if (sentences[index + 1]) {
+              sentences[index + 1] = sent + sentences[index + 1];
+            }
+          } else if (priors.includes(firstWord)) {
+            console.log("sentence begins in " + firstWord);
+            result[result.length - 1] = result[result.length - 1] + sent;
+          } else {
+            result.push(sentences[index]);
+          }
+        });
+        return result;
+      }
+      return [scene];
     }
   },
   getters: {
