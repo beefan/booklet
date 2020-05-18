@@ -201,7 +201,7 @@ export default {
           break;
       }
 
-      return this.timing * this.wait * weight;
+      return (2 - this.timing) * this.wait * weight;
     },
     pageText() {
       if (this.curr.scene < 0) {
@@ -223,7 +223,7 @@ export default {
 <style lang="sass">
 #stage
   width: 100%
-  font-size: 7.5vw
+  font-size: 6.5vw
   .highlighted-word
     background-color: yellow
   margin: 5%

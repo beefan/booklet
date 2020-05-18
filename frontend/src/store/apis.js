@@ -74,3 +74,22 @@ export async function getUserBooklets(userId) {
       console.error(err);
     });
 }
+
+export async function savePdfAsBooklet(pdfFile, userId) {
+  const route = `${api}/pdf/${userId}`;
+  const formData = new FormData();
+  formData.append(pdfFile);
+
+  fetch(route, {
+    method: "POST",
+    body: formData
+  })
+    .then(response => {
+      if (response.ok) {
+        console.log("successfully uploaded pdf");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+    });
+}

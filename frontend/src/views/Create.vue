@@ -1,16 +1,10 @@
 <template lang="pug">
   div#syntax-playground
     b-button-group#create-buttons(size="lg")
-      b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp; showPasteBox = false") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
+      b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="processFormatHelp()") {{`${ showFormatHelp ? 'hide ' : ''} format help`}}
       b-button(variant="dark" @click="saveBooklet()") save booklet
       b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
-    //- b-row#create-footer
-      //- b-col.clickable(xs="4") 
-      //-   b-button(:variant="showFormatHelp ? 'danger' : 'info'" @click="showFormatHelp = !showFormatHelp; showPasteBox = false") {{`${ showFormatHelp ? 'hide ' : 'show '} format help`}}
-      //- b-col.clickable(xs="4") 
-      //-   b-button(:variant="showPasteBox ? 'danger' : 'info'" @click="processPaste()") {{`${ showPasteBox ? 'process ' : ''} paste`}}
-      //- b-col.clickable(xs="4")
-      //-   b-button(variant="success")
+      b-button(:variant="showPdfUpload ? 'danger' : 'info'" @click="processPdfUpload()") {{`${ showPdfUpload ? 'upload file' : 'pdf upload'}`}}
     b-row#create-header
       b-col(xs="8") {{ booklet.title }}
       b-col(xs="4") {{ booklet.author }}
@@ -18,6 +12,13 @@
       b-table(striped hover :items="formattingHelp" head-variant="dark" small bordered)
     b-row(v-if="showPasteBox")
       b-form-textarea#paste-box
+    b-row#pdf-upload(v-if="showPdfUpload")
+      b-form-file(
+      v-model="pdfFile"
+      size="sm"
+      accept=".pdf"
+      placeholder="Choose a file or drop it here..."
+      drop-placeholder="Drop file here...")
     b-form-group(v-for="(scene, index) in booklet.scenes" v-bind:key="index")
       label {{ scene.title }}
       b-form-textarea.booklet-create(
@@ -47,6 +48,8 @@ export default {
                       {command: '!/del/', action: 'deletes focused scene'}],
       showFormatHelp: false,
       showPasteBox: false,
+      showPdfUpload: false,
+      pdfFile: null,
       scene: {
         title: '',
         text: '',
@@ -89,6 +92,21 @@ export default {
     },
     newScene() {
       this.booklet.scenes.push({});
+    },
+    processFormatHelp() {
+      this.showFormatHelp = !this.showFormatHelp; 
+      this.showPasteBox = false; 
+      this.showPdfUpload = false;
+    },
+    processPdfUpload() {
+      if (this.pdfFile) {
+        console.log('uploading ' + this.pdfFile.name)
+        this.$store.state.dispatch('savePdfAsBooklet', this.pdfFile);
+        this.pdfFile = null;
+      }
+      this.showPdfUpload = !this.showPdfUpload;
+      this.showFormatHelp = false;
+      this.showPasteBox = false;
     },
     processPaste() {
       this.showFormatHelp = false;
@@ -252,4 +270,6 @@ export default {
 #format-desc
   color: grey
   font-size: .7rem
+#pdf-upload
+  width: 100%
 </style>

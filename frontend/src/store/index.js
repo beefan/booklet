@@ -6,15 +6,17 @@ Vue.use(Vuex);
 //return ;
 const store = new Vuex.Store({
   state: {
-    userId: 1,
-    userLikes: [],
-    userBooklets: [],
+    user: {
+      id: 1,
+      likes: [],
+      booklets: []
+    },
     booklet: {},
     editBooklet: {},
     isReading: false,
     curr: { scene: 0, sent: 0, word: 0 },
     splitP: function(scene) {
-      let sentences = scene.match(/[^.?!]+[.!?]+[\])'"`’”]*/g);
+      let sentences = scene.match(/[^.?;!]+[.!;?]+[\])'"`’”]*/g);
       if (sentences) {
         // if a sentence ends in a whoopsie, combine it with the next sentence.
         const whoopsies = [
@@ -150,6 +152,9 @@ const store = new Vuex.Store({
     },
     saveBooklet(state, payload) {
       apis.saveBooklet(payload);
+    },
+    savePdfAsBooklet(state, payload) {
+      apis.savePdfAsBooklet(payload, state.user.id);
     },
     async loadUserData(state) {
       const vm = this;
