@@ -103,6 +103,8 @@ export default {
         console.log('uploading ' + this.pdfFile.name)
         this.$store.state.dispatch('savePdfAsBooklet', this.pdfFile);
         this.pdfFile = null;
+        alert('pdf uploaded')
+        this.$router.push('/user');
       }
       this.showPdfUpload = !this.showPdfUpload;
       this.showFormatHelp = false;

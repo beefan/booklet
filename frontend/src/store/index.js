@@ -151,7 +151,7 @@ const store = new Vuex.Store({
       });
     },
     saveBooklet(state, payload) {
-      apis.saveBooklet(payload);
+      apis.saveBooklet(payload, state.user.id);
     },
     savePdfAsBooklet(state, payload) {
       apis.savePdfAsBooklet(payload, state.user.id);

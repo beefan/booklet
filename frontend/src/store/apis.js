@@ -17,8 +17,8 @@ export async function getBooklet(id) {
     });
 }
 
-export async function saveBooklet(booklet) {
-  const route = `${api}/save`;
+export async function saveBooklet(booklet, userId) {
+  const route = `${api}/save/${userId}`;
   console.log("saving booklet");
   console.log(booklet);
   fetch(route, {

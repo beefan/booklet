@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
+const formidable = require('formidable')
 const port = 8082;
 
 const dao = require('./util/data-access-layer.js');
@@ -57,7 +58,20 @@ app.get('api/v1/all/:userId', (req, res) => {
  */
 app.post('api/v1/pdf/:userId', (req, res) => {
   console.log('upload booklet as pdf')
-  dao.savePdfAsBooklet(req.body, req.params.userId, res);
+  new formidable.IncomingForm().parse(req, (err, fields, files) => {
+    if (err) {
+      console.error('Error', err)
+      throw err
+    }
+    console.log('Fields', fields)
+    console.log('Files', files)
+    for (const pdf of Object.entries(files)) {
+      console.log('this is a saving of a pdf')
+      // save a pdf 
+      dao.savePdfAsBooklet(pdf, req.params.userId, res);    }
+  })
+
+  
 })
 
 /**
