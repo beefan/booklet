@@ -208,7 +208,7 @@ export default {
         return "";
       }
       const scene = this.scenes[this.curr.scene];
-      const sentences = this.$store.state.splitP(scene.text);
+      const sentences = this.$store.state.splitP(scene.body);
       return sentences[this.curr.sent];
     },
   },

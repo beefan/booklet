@@ -1,7 +1,3 @@
-// paths of PDFs used to insert example data. 
-// const bookletPath = 'ex-booklets/goldman-individual-society-and-the-state.pdf'
-const bookletPath = 'ex-booklets/psychedelic-miracle.pdf'
-
 /**
  * 
  * @param {*} path 
@@ -52,7 +48,7 @@ function createBookletFromPDFData(data, userId) {
   for (let i = 0; i < paragraphs.length; i++) {
     const scene =  {
       title: paragraphs[i].substring(0, 9),
-      text: paragraphs[i],
+      body: paragraphs[i],
       format: {
         color: '',
         hltColor: '',

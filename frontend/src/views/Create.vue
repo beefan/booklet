@@ -23,7 +23,7 @@
       label {{ scene.title }}
       b-form-textarea.booklet-create(
       :id="`scene:${index}`"
-      :value="scene.text" 
+      :value="scene.body" 
       size="sm" rows="5" 
       :formatter="formatScene"
       :style="{color: scene.format.color, backgroundColor: scene.format.bgColor}"
@@ -52,7 +52,7 @@ export default {
       pdfFile: null,
       scene: {
         title: '',
-        text: '',
+        body: '',
         format: {
           color: '',
           hltColor: '',
@@ -63,7 +63,7 @@ export default {
       booklet: {
         title: '',
         author: '',
-        scenes: [{text:'', title:'', format:{}}]
+        scenes: [{body:'', title:'', format:{}}]
       }
     }
   },
@@ -126,7 +126,7 @@ export default {
       let booklet = {title: '', author: '', scenes: []}
       let scenes = raw.split('!/n/')
       scenes.forEach( scene => {
-        booklet.scenes.push({text: scene, title:'', format:{}});
+        booklet.scenes.push({body: scene, title:'', format:{}});
       })
       this.booklet = booklet
 
@@ -135,14 +135,14 @@ export default {
       });
 
       this.booklet.scenes.forEach( (x, i) => {
-        if (x.text === '') {
+        if (x.body === '') {
           this.booklet.scenes.splice(i, 1)
         }
       })
 
     },
     runPasteCommands(scene, index) {
-      let lines = scene.text.split('\n')
+      let lines = scene.body.split('\n')
       lines = lines.map(line => {
         if (this.isCommand(line)) {
           if(this.processCmd(this.getCommand(line), `scene:${index}`)){
@@ -158,7 +158,7 @@ export default {
         }
       })
 
-      scene.text = lines.join('\n').trim()
+      scene.body = lines.join('\n').trim()
       return scene
     },
     isCommand(str) {
@@ -234,7 +234,7 @@ export default {
           break;
         case 'n':
           console.log('n')
-          this.booklet.scenes.splice(sceneI + 1, 0, {text:'', title:'', format:{}})
+          this.booklet.scenes.splice(sceneI + 1, 0, {body:'', title:'', format:{}})
           new Promise(resolve => setTimeout(resolve, 250)).then(()=> {
             document.getElementById(`scene:${Number(sceneI) + 1}`).focus()
           })          

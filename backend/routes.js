@@ -115,6 +115,7 @@ app.get('/api/v1/likes/:userId', (req, res) => {
 /* POST a Booklet */
 app.post('/api/v1/save', (req, res) => {
   console.log('post booklet')
+  console.log(req.body);
   const booklet = new Booklet(req.body);
   booklet.save((err, booklet) => {
     if (err) {

@@ -6,7 +6,7 @@ const Booklet = new Schema({
   title: String,
   author: String,
   scenes: [{ title: String, 
-             author: String, 
+             body: String, 
              format: {
                 color: String, 
                 hltColor: String, 

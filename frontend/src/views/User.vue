@@ -5,7 +5,7 @@
       p your email: {{ user.email }} 
     div#user-booklets
       p Your Booklets
-      p(v-for="(b, index) in userBooklets" v-bind:key="index") {{ b.title }}
+      b-button(v-for="(b, index) in userBooklets" v-bind:key="index") {{ b.title }} {{ b.scenes[0].body}}
     div#user-likes
       p Favorites
       p(v-for="(l, index) in userLikes" v-bind:key="index") {{ l.title }}
