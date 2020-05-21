@@ -47,7 +47,7 @@ function createBookletFromPDFData(data, userId) {
   //put paragraphs into scenes
   for (let i = 0; i < paragraphs.length; i++) {
     const scene =  {
-      title: paragraphs[i].substring(0, 9),
+      title: paragraphs[i].substring(0, 15),
       body: paragraphs[i],
       format: {
         color: '',
