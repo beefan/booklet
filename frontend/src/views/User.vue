@@ -1,5 +1,6 @@
 <template lang="pug">
   div(v-if="user")
+    p(v-if="!userDataLoaded") {{ loadUserData() }}
     div#user-info
       p Hello {{ user.username }}!
       p your email: {{ user.email }} 
@@ -13,6 +14,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      userDataLoaded: false
+    }
+  },
   computed: {
     user() {
       return this.$store.state.user;
@@ -22,6 +28,12 @@ export default {
     },
     userBooklets() {
       return this.$store.state.userBooklets;
+    }
+  },
+  methods:{
+    loadUserData() {
+      this.$store.dispatch("loadUserData", this.user);
+      this.userDataLoaded = true;
     }
   }
 }

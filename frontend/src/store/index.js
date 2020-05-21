@@ -159,7 +159,7 @@ const store = new Vuex.Store({
         alert("successfully logged in");
         console.log(res.user);
         this.commit("setUser", res.user);
-        this.dispatch("loadUserData", res.user);
+        //this.dispatch("loadUserData", res.user);
       } else {
         alert("login failed. try again");
       }
@@ -170,7 +170,7 @@ const store = new Vuex.Store({
         alert("successfully registered user");
         console.log(res.user);
         this.commit("setUser", res.user);
-        this.dispatch("loadUserData", res.user);
+        //this.dispatch("loadUserData", res.user);
       } else {
         alert("failed to register user");
       }
