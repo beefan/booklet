@@ -6,11 +6,9 @@ Vue.use(Vuex);
 //return ;
 const store = new Vuex.Store({
   state: {
-    user: {
-      id: 1,
-      likes: [],
-      booklets: []
-    },
+    user: null,
+    userLikes: null,
+    userBooklets: null,
     booklet: {},
     editBooklet: {},
     isReading: false,
@@ -74,6 +72,9 @@ const store = new Vuex.Store({
     },
     getUserBooklets: state => {
       return state.userBooklets;
+    },
+    getUser: state => {
+      return state.user;
     }
   },
   mutations: {
@@ -86,6 +87,9 @@ const store = new Vuex.Store({
     },
     toggleRead(state) {
       state.isReading = !state.isReading;
+    },
+    setUser(state, payload) {
+      state.user = payload;
     },
     setBooklet(state, payload) {
       state.booklet = payload;
@@ -144,28 +148,52 @@ const store = new Vuex.Store({
     }
   },
   actions: {
+    logout(state) {
+      console.log("logout called");
+      apis.logout();
+      state.user = null;
+    },
+    async login(state, user) {
+      const res = await apis.login(user);
+      if (res.success) {
+        alert("successfully logged in");
+        console.log(res.user);
+        this.commit("setUser", res.user);
+      } else {
+        alert("login failed. try again");
+      }
+    },
+    async register(state, user) {
+      const res = await apis.registerUser(user);
+      if (res.success) {
+        alert("successfully registered user");
+        console.log(res.user);
+        this.commit("setUser", res.user);
+      } else {
+        alert("failed to register user");
+      }
+    },
     async loadBooklet(state, payload) {
-      const vm = this;
       apis.getBooklet(payload.id).then(res => {
-        vm.commit("setBooklet", res);
+        this.commit("setBooklet", res);
       });
     },
-    saveBooklet(state, payload) {
-      apis.saveBooklet(payload, state.user.id);
+    saveBooklet(state, booklet) {
+      apis.saveBooklet(booklet);
     },
     savePdfAsBooklet(state, payload) {
-      apis.savePdfAsBooklet(payload, state.user.id);
-    },
-    async loadUserData(state) {
-      const vm = this;
-      console.log(state.userId);
-      apis.getUserLikes(4).then(res => {
-        vm.commit("setUserLikes", res);
-      });
-      apis.getUserBooklets(4).then(res => {
-        vm.commit("setUserBooklets", res);
-      });
+      apis.savePdfAsBooklet(payload.pdf, payload.userId);
     }
+    // loadUserData(state) {
+    //   const vm = this;
+    //   console.log(state.user.id);
+    //   apis.getUserLikes(this.user.id).then(res => {
+    //     vm.commit("setUserLikes", res);
+    //   });
+    //   apis.getUserBooklets(this.user.id).then(res => {
+    //     vm.commit("setUserBooklets", res);
+    //   });
+    // }
   }
 });
 

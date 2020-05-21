@@ -5,13 +5,28 @@
         b-navbar-toggle(target="nav-text-collapse")
         b-navbar-brand booklet
         b-collapse(id="nav-text-collapse" is-nav)
-          b-navbar-nav
-            b-nav-item(:to="{path: '/'}") Booklet 
+          b-navbar-nav(v-if="loggedIn")
+            b-nav-item(:to="{path: '/user'}") Home
             b-nav-item(:to="{path: '/create-new'}") Create
-            b-nav-item(:to="{path: '/user'}") User
+            b-nav-item(@click="logout") Logout
+          b-navbar-nav(v-if="!loggedIn")
+            b-nav-item(:to="{path: '/login'}") Login
     router-view
 </template>
-
+<script>
+export default {
+  methods: {
+    logout() {
+      this.$store.dispatch('logout');
+    }
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.user;
+    }
+  }
+}
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

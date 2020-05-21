@@ -1,82 +1,43 @@
+const port = 8080;
+
+/* Express setup */
 const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+const expressSession = require('express-session')({
+  secret: 'ducks have no luck in dry summers',
+  resave: false,
+  saveUninitialized: false
+});
 const app = express();
-const formidable = require('formidable')
-const port = 8082;
+app.use(expressSession);
 
-const dao = require('./util/data-access-layer.js');
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:4000");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+/* CORS setup */
+const cors = require('cors');
 app.use(cors());
-app.options('*', cors());
+app.options('*', cors())
+
+/* Body Parser Setup */
+const bodyParser = require('body-parser');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
-/** 
- * GET A BOOKLET FROM THE MONGODB
- * RANDOM FOR NOW? 
- */
-app.get('/api/v1/:id', (req, res) => {
-  console.log('get booklet ' + req.params.id)
-  dao.getBookletById(req.params.id, res);
-});
+/* Passport setup */
+const passport = require('passport');
+const User = require('./models/user');
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy()); 
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
-/**
- * POST A BOOKLET IN THE MONGODB
- */
-app.post('/api/v1/save', (req, res) => {
-  console.log('post booklet')
-  dao.saveBooklet(req.body, res);
-});
+/* Mongoose Setup */
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017', 
+  { useNewUrlParser: true, useUnifiedTopology: true });
 
-/**
- * GET LIKES BY USER ID
- */
-app.get('/api/v1/likes/:userId', (req, res) => {
-  console.log('get likes for user ' + req.params.userId)
-  dao.getLikesByUserId(req.params.userId, res);
-});
+/* Routes */
+require('./routes')(app);
 
-/**
- * GET BOOKLETS BY USER ID
- */
-app.get('api/v1/all/:userId', (req, res) => {
-  console.log('get booklets by user ' + req.params.userId)
-  dao.getBookletsByUserId(req.params.userId, res);
-});
-
-/** 
- * UPLOAD USER PDF AS BOOKLET 
- */
-app.post('api/v1/pdf/:userId', (req, res) => {
-  console.log('upload booklet as pdf')
-  new formidable.IncomingForm().parse(req, (err, fields, files) => {
-    if (err) {
-      console.error('Error', err)
-      throw err
-    }
-    console.log('Fields', fields)
-    console.log('Files', files)
-    for (const pdf of Object.entries(files)) {
-      console.log('this is a saving of a pdf')
-      // save a pdf 
-      dao.savePdfAsBooklet(pdf, req.params.userId, res);    }
-  })
-
-  
-})
-
-/**
- * LISTEN AT 8080
- */
+/* LISTEN AT 8080 */
 app.listen(port, () => {
   console.log(`booklet listening for requests at http://localhost:${port}`);
 });

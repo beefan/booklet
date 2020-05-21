@@ -1,7 +1,8 @@
 <template lang="pug">
-  div
+  div(v-if="user")
     div#user-info
-      p userName: 
+      p Hello {{ user.username }}!
+      p your email: {{ user.email }} 
     div#user-booklets
       p(v-for="(b, index) in userBooklets" v-bind:key="index") {{ b.title }}
     div#user-likes
@@ -11,6 +12,9 @@
 <script>
 export default {
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     userLikes() {
       return this.$store.state.userLikes;
     },
@@ -19,7 +23,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('loadUserData');
+    // this.$store.dispatch('loadUserData');
   }
 }
 </script>

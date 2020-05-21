@@ -33,7 +33,8 @@ function findBookletById(db, callback) {
   })
 }
 
-const saveBooklet = (booklet, res) => {
+const saveBooklet = (booklet, userId, res) => {
+  booklet.userId = userId;
   client.connect(err => {
     const db = client.db(dbName);
     insertBooklet(booklet, db, () => {

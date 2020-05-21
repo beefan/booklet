@@ -85,9 +85,12 @@ export default {
     },
     saveBooklet() {
       if (confirm('Save booklet to profile?')) {
-        this.$store.commit('setEditBooklet', this.booklet)
-        //this.$store.dispatch('saveBooklet', this.booklet)
+        const sendBooklet = this.booklet;
+        sendBooklet.userId = this.user.id;
+        this.$store.commit('setEditBooklet', sendBooklet);
+        this.$store.dispatch('saveBooklet', sendBooklet);
         alert('Booklet saved')
+        // this.$router.push('/user');
       }
     },
     newScene() {
@@ -101,10 +104,10 @@ export default {
     processPdfUpload() {
       if (this.pdfFile) {
         console.log('uploading ' + this.pdfFile.name)
-        this.$store.state.dispatch('savePdfAsBooklet', this.pdfFile);
+        this.$store.dispatch('savePdfAsBooklet', {pdf: this.pdfFile, userId: this.user.id});
         this.pdfFile = null;
         alert('pdf uploaded')
-        this.$router.push('/user');
+        // this.$router.push('/user');
       }
       this.showPdfUpload = !this.showPdfUpload;
       this.showFormatHelp = false;
@@ -245,6 +248,9 @@ export default {
     },
   },
   computed: {
+    user() {
+      return this.$store.state.user;
+    },
     editBooklet() {
       return this.$store.state.editBooklet;
     },
