@@ -4,8 +4,10 @@
       p Hello {{ user.username }}!
       p your email: {{ user.email }} 
     div#user-booklets
+      p Your Booklets
       p(v-for="(b, index) in userBooklets" v-bind:key="index") {{ b.title }}
     div#user-likes
+      p Favorites
       p(v-for="(l, index) in userLikes" v-bind:key="index") {{ l.title }}
 </template>
 
@@ -21,9 +23,6 @@ export default {
     userBooklets() {
       return this.$store.state.userBooklets;
     }
-  },
-  created() {
-    // this.$store.dispatch('loadUserData');
   }
 }
 </script>

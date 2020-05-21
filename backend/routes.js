@@ -2,6 +2,7 @@ const formidable = require('formidable');
 const passport = require('passport');
 const pdfParser = require('./util/pdf-parsing');
 const connectEnsureLogin = require('connect-ensure-login');
+const mongoose = require("mongoose");
 
 const User = require('./models/user');
 const Booklet = require('./models/booklet');
@@ -70,23 +71,38 @@ app.get('/api/v1/user',
   /* GET a Booklet by Id */
 app.get('/api/v1/:id', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
   console.log('get booklet ' + req.params.id)
-  //dao.getBookletById(req.params.id, res);
-  const id = ObjectId("5ebebf4ace834544f21faf8d");
+  const id = mongoose.Types.ObjectId("5ec41ae4ad29422205fbb817");
   res.send(Booklet.findById(id));
 });
 
 /* GET Booklets by User Id */
-app.get('api/v1/all/:userId', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  console.log('get booklets by user ' + req.params.userId)
-  //dao.getBookletsByUserId(req.params.userId, res);
-  res.send(Booklet.find({userId: req.params.userId}));
+app.get('/api/v1/all/:userId', (req, res) => {
+  const userId = req.params.userId;
+  console.log('get booklets by user ' + userId)
+  const query = Booklet.find({
+    "userId": mongoose.Types.ObjectId(userId)
+  })
+  query.exec().then(doc => {
+    console.log(doc);
+    res.send(doc);
+  }).catch(err => {
+    console.log('error occured fetching user booklets: '+ err);
+  })
 });
 
 /* GET Likes by User Id */
-app.get('/api/v1/likes/:userId', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  console.log('get likes for user ' + req.params.userId)
-  res.send(Booklet.find({likes: {$in: [req.params.userId]} }))
-  // dao.getLikesByUserId(req.params.userId, res);
+app.get('/api/v1/likes/:userId', (req, res) => {
+  const userId = req.params.userId;
+  console.log('get likes for user ' + userId)
+  const query = Booklet.find({
+    "likes": {$in: [mongoose.Types.ObjectId(userId)]} 
+  })
+  query.exec().then(doc => {
+    console.log(doc);
+    res.send(doc);
+  }).catch(err => {
+    console.log('error occured fetching user likes: '+ err);
+  })
 });
 
 /* PUT update user info */

@@ -1,5 +1,10 @@
 const api = process.env.VUE_APP_API;
 
+/**
+ * Save a booklet to user profile
+ *
+ * @param {*} booklet
+ */
 export function saveBooklet(booklet) {
   const route = `${api}/save`;
   console.log("saving booklet");
@@ -21,6 +26,13 @@ export function saveBooklet(booklet) {
     });
 }
 
+/**
+ * Handle user Pdf upload to be saved
+ * to profile as booklet
+ *
+ * @param {*} pdfFile
+ * @param {*} userId
+ */
 export async function savePdfAsBooklet(pdfFile, userId) {
   const route = `${api}/pdf`;
   console.log("contacting " + route);
@@ -42,7 +54,12 @@ export async function savePdfAsBooklet(pdfFile, userId) {
     });
 }
 
-export function registerUser(user) {
+/**
+ * Register New User
+ *
+ * @param {*} user
+ */
+export async function registerUser(user) {
   const route = `${api}/register`;
   return fetch(route, {
     method: "POST",
@@ -62,7 +79,12 @@ export function registerUser(user) {
     });
 }
 
-export function login(user) {
+/**
+ * User Login
+ *
+ * @param {*} user
+ */
+export async function login(user) {
   const route = `${api}/login`;
   return fetch(route, {
     method: "POST",
@@ -82,6 +104,9 @@ export function login(user) {
     });
 }
 
+/**
+ * Logout
+ */
 export function logout() {
   const route = `${api}/logout`;
   fetch(route)
@@ -95,6 +120,11 @@ export function logout() {
     });
 }
 
+/**
+ * Get a single booklet by its ID
+ *( deprecated? )
+ * @param {*} id
+ */
 export async function getBooklet(id) {
   const route = `${api}/${id}`;
   console.log("contacting" + route + " for booklet id " + id);
@@ -112,10 +142,13 @@ export async function getBooklet(id) {
     });
 }
 
-// copy of above getter for now.
-// update once server / mongodb updated
+/**
+ * Get Booklets Liked By User
+ *
+ * @param {*} userId
+ */
 export async function getUserLikes(userId) {
-  const route = `${api}/${userId}`;
+  const route = `${api}/likes/${userId}`;
   console.log("contacting" + route + " for booklet id " + userId);
   return fetch(route)
     .then(response => {
@@ -124,17 +157,21 @@ export async function getUserLikes(userId) {
     .then(data => {
       console.log("incoming!!");
       console.log(data);
-      return [data];
+      return data;
     })
     .catch(err => {
       console.error(err);
     });
 }
-// copy of above getter for now.
-// update once server / mongodb updated
+
+/**
+ * Get Booklets saved To User Profile
+ *
+ * @param {*} userId
+ */
 export async function getUserBooklets(userId) {
   console.log(userId);
-  const route = `${api}/${userId}`;
+  const route = `${api}/all/${userId}`;
   console.log("contacting " + route + " for booklet id " + userId);
   return fetch(route)
     .then(response => {
@@ -143,13 +180,18 @@ export async function getUserBooklets(userId) {
     .then(data => {
       console.log("incoming!!");
       console.log(data);
-      return [data];
+      return data;
     })
     .catch(err => {
       console.error(err);
     });
 }
 
+/**
+ * Update User Profile
+ *
+ * @param {*} user
+ */
 export async function updateUserInfo(user) {
   const route = `${api}/user`;
   fetch(route, {

@@ -78,16 +78,6 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    navigate(state, payload) {
-      state.curr = {
-        scene: payload.scene,
-        sent: payload.sent,
-        word: 0
-      };
-    },
-    toggleRead(state) {
-      state.isReading = !state.isReading;
-    },
     setUser(state, payload) {
       state.user = payload;
     },
@@ -95,7 +85,6 @@ const store = new Vuex.Store({
       state.booklet = payload;
     },
     setEditBooklet(state, payload) {
-      console.log("set edit booklet");
       state.editBooklet = payload;
     },
     setUserBooklets(state, payload) {
@@ -106,6 +95,15 @@ const store = new Vuex.Store({
     },
     setWord(state, word) {
       state.curr.word = word;
+    },
+    navigate(state, payload) {
+      state.curr = {
+        scene: payload.scene,
+        sent: payload.sent
+      };
+    },
+    toggleRead(state) {
+      state.isReading = !state.isReading;
     },
     nextPage(state) {
       let totalScenes = state.booklet.scenes.length - 1;
@@ -159,6 +157,7 @@ const store = new Vuex.Store({
         alert("successfully logged in");
         console.log(res.user);
         this.commit("setUser", res.user);
+        this.dispatch("loadUserData", res.user);
       } else {
         alert("login failed. try again");
       }
@@ -169,6 +168,7 @@ const store = new Vuex.Store({
         alert("successfully registered user");
         console.log(res.user);
         this.commit("setUser", res.user);
+        this.dispatch("loadUserData", res.user);
       } else {
         alert("failed to register user");
       }
@@ -183,17 +183,17 @@ const store = new Vuex.Store({
     },
     savePdfAsBooklet(state, payload) {
       apis.savePdfAsBooklet(payload.pdf, payload.userId);
+    },
+    loadUserData(state, user) {
+      console.log("logging user data");
+      console.log(user.id);
+      apis.getUserBooklets(user.id).then(res => {
+        this.commit("setUserBooklets", res);
+      });
+      apis.getUserLikes(user.id).then(res => {
+        this.commit("setUserLikes", res);
+      });
     }
-    // loadUserData(state) {
-    //   const vm = this;
-    //   console.log(state.user.id);
-    //   apis.getUserLikes(this.user.id).then(res => {
-    //     vm.commit("setUserLikes", res);
-    //   });
-    //   apis.getUserBooklets(this.user.id).then(res => {
-    //     vm.commit("setUserBooklets", res);
-    //   });
-    // }
   }
 });
 

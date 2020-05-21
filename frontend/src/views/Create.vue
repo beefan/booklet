@@ -90,7 +90,7 @@ export default {
         this.$store.commit('setEditBooklet', sendBooklet);
         this.$store.dispatch('saveBooklet', sendBooklet);
         alert('Booklet saved')
-        // this.$router.push('/user');
+        this.$router.push('/user');
       }
     },
     newScene() {
@@ -107,7 +107,7 @@ export default {
         this.$store.dispatch('savePdfAsBooklet', {pdf: this.pdfFile, userId: this.user.id});
         this.pdfFile = null;
         alert('pdf uploaded')
-        // this.$router.push('/user');
+        this.$router.push('/user');
       }
       this.showPdfUpload = !this.showPdfUpload;
       this.showFormatHelp = false;
