@@ -1,5 +1,5 @@
 <template lang="pug">
-  b-container#flip
+  b-container#flip(v-if="scenes")
     b-row#booklet-info
       div {{ title }}
       div {{ author }} 
@@ -162,10 +162,10 @@ export default {
                 </p>`;
     },
     setThisFormat(format) {
-        this.format.color = format.color ? format.color : this.defaultFormat.color;
-        this.format.bgColor = format.bgColor ? format.bgColor : this.defaultFormat.bgColor;
-        this.format.hltColor = format.hltColor ? format.hltColor : this.defaultFormat.hltColor;
-        this.format.speed = format.speed ? format.speed : this.defaultFormat.speed;
+        this.format.color = (format && format.color) ? format.color : this.defaultFormat.color;
+        this.format.bgColor = (format && format.bgColor) ? format.bgColor : this.defaultFormat.bgColor;
+        this.format.hltColor = (format && format.hltColor) ? format.hltColor : this.defaultFormat.hltColor;
+        this.format.speed = (format && format.speed) ? format.speed : this.defaultFormat.speed;
     }
   },
   computed: {
@@ -211,11 +211,6 @@ export default {
       const sentences = this.$store.state.splitP(scene.body);
       return sentences[this.curr.sent];
     },
-  },
-  created() {
-    if (!this.scenes) {
-      this.$store.dispatch('loadBooklet', {id: 4})
-    }
   }
 };
 </script>

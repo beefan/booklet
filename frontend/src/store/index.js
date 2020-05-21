@@ -109,7 +109,7 @@ const store = new Vuex.Store({
       let totalScenes = state.booklet.scenes.length - 1;
       let thisScene = state.booklet.scenes[state.curr.scene];
 
-      let sentInScene = state.splitP(thisScene.text).length - 1;
+      let sentInScene = state.splitP(thisScene.body).length - 1;
 
       if (state.curr.sent < sentInScene) {
         state.curr = {

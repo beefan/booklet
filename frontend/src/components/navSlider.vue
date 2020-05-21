@@ -29,7 +29,7 @@ export default {
     },
     renderPage(page) {
       let s = Number(page.id.substring(2));
-      return `Scene: ${s + 1} - ${page.text}`;
+      return `Scene: ${s + 1} - ${page.body}`;
     }
   },
   computed: {
@@ -57,19 +57,8 @@ export default {
         return [];
       }
       let pages = [];
-      // let sn = 0;
-      // let st = 0;
-      // console.log('pages')
-      // console.log(v.scenes)
       v.scenes.forEach((scene, index) => {
-        pages.push({ id: `SN${index}`, text: scene.text })
-        // sn = index;
-        // let sents = v.$store.state.splitP(scene.text)
-        // sents.forEach((sent, index) => {
-        //   st = index;
-        //   let id = `Scene:${sn}`;
-        //   pages.push({ id: id, text: scene.text });
-        // });
+        pages.push({ id: `SN${index}`, body: scene.body })
       });
       return pages;
     }

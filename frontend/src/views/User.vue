@@ -6,7 +6,11 @@
       p your email: {{ user.email }} 
     div#user-booklets
       p Your Booklets
-      b-button(v-for="(b, index) in userBooklets" v-bind:key="index") {{ b.title }} {{ b.scenes[0].body}}
+      b-button(
+      v-for="(b, index) in userBooklets" 
+      v-bind:key="index"
+      @click="loadBooklet(b)"  
+              ) {{ b.title }} {{ b.scenes[0].body}}
     div#user-likes
       p Favorites
       p(v-for="(l, index) in userLikes" v-bind:key="index") {{ l.title }}
@@ -34,6 +38,10 @@ export default {
     loadUserData() {
       this.$store.dispatch("loadUserData", this.user);
       this.userDataLoaded = true;
+    },
+    loadBooklet(booklet) {
+      this.$store.commit("setBooklet", booklet);
+      this.$router.push('/booklet');
     }
   }
 }
