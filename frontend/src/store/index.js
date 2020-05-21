@@ -99,7 +99,8 @@ const store = new Vuex.Store({
     navigate(state, payload) {
       state.curr = {
         scene: payload.scene,
-        sent: payload.sent
+        sent: payload.sent,
+        word: 0
       };
     },
     toggleRead(state) {

@@ -21,24 +21,22 @@ export default {
   components: {
     "nav-slider": NavSlider
   },
+  created() {
+    this.$store.commit('navigate', {sent: 0, scene: 0});
+  },
   data() {
     return {
       going: false,
       changed: false,
       timing: 1,
       wait: 250,
-      format: {
-          color: '#2c3e50',
-          hltColor: 'yellow',
-          bgColor: 'white',
-          speed: 'normal' // slower, slow, fast, faster (also possible)
-        },
       defaultFormat: {
           color: '#2c3e50',
           hltColor: 'yellow',
           bgColor: 'white',
           speed: 'normal' // slower, slow, fast, faster (also possible)
-        }
+        },
+      format: {}
     };
   },
   methods: {

@@ -78,10 +78,9 @@ export default {
       const sceneForReplay = {
                   title: this.booklet.title, 
                   author: this.booklet.author, 
-                  scenes: [this.booklet.scenes[this.currScene]] };
+                  scenes: [this.booklet.scenes[i]] };
       this.$store.commit('setBooklet', sceneForReplay);
-      this.$store.commit('navigate', {sent: 0, scene: i});
-      this.$router.push('/');
+      this.$router.push('/booklet');
     },
     saveBooklet() {
       if (confirm('Save booklet to profile?')) {
