@@ -1,19 +1,18 @@
 <template lang="pug">
   div(v-if="user")
     p(v-if="!userDataLoaded") {{ loadUserData() }}
-    div#user-info
-      p Hello {{ user.username }}!
-      p your email: {{ user.email }} 
-    div#user-booklets
-      p Your Booklets
-      b-button(
-      v-for="(b, index) in userBooklets" 
-      v-bind:key="index"
-      @click="loadBooklet(b)"  
-              ) {{ b.title }} {{ b.scenes[0].body}}
-    div#user-likes
-      p Favorites
-      p(v-for="(l, index) in userLikes" v-bind:key="index") {{ l.title }}
+    b-dropdown.user-booklets(text="Your Booklets" block variant="primary" class="m-2" menu-class="w-100")
+      div(v-for="(b, index) in userBooklets" v-bind:key="index")
+        b-dropdown-item(@click="loadBooklet(b)") 
+          p.title {{ b.title }} 
+          p.snippet {{ b.scenes[0].body }}
+        b-dropdown-divider
+    b-dropdown.user-booklets(text="Favorites" block variant="primary" class="m-2" menu-class="w-100")
+      div(v-for="(l, index) in userLikes" v-bind:key="index")
+        b-dropdown-item(@click="loadBooklet(b)") 
+          p.title {{ l.title }} 
+          p.snippet {{ l.scenes[0].body }}
+        b-dropdown-divider
 </template>
 
 <script>
@@ -36,8 +35,8 @@ export default {
   },
   methods:{
     loadUserData() {
-      this.$store.dispatch("loadUserData", this.user);
       this.userDataLoaded = true;
+      this.$store.dispatch("loadUserData", this.user);
     },
     loadBooklet(booklet) {
       this.$store.commit("setBooklet", booklet);
@@ -48,5 +47,20 @@ export default {
 </script>
 
 <style lang="sass">
-
+#user-info
+  background-color: #ccc
+.user-booklets
+  ul
+    margin-top: 27%
+  .dropdown-item
+    height: 100px
+    overflow: hidden
+    p 
+      width: 100%
+    .title
+      font-weight: bold
+    .snippet
+      font-style: italic
+      font-size: .8rem
+      white-space: normal
 </style>
