@@ -1,7 +1,7 @@
 const formidable = require('formidable');
 const passport = require('passport');
 const pdfParser = require('./util/pdf-parsing');
-const connectEnsureLogin = require('connect-ensure-login');
+// const connectEnsureLogin = require('connect-ensure-login');
 const mongoose = require("mongoose");
 
 const User = require('./models/user');
@@ -43,7 +43,6 @@ app.post('/api/v1/login', function(req, res) {
       if (err) {
         return next(err);
       }
-      console.log(user);
       res.json({
         success: true, 
         user: {
@@ -57,23 +56,33 @@ app.post('/api/v1/login', function(req, res) {
 });
 
 /* logout */
-app.get('/api/v1/logout', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+app.get('/api/v1/logout', (req, res) => {
+  console.log('log out called')
   req.logout();
   res.sendStatus(201);
 });
 
 /* GET logged in user */
-app.get('/api/v1/user',
-  connectEnsureLogin.ensureLoggedIn(),
-  (req, res) => res.send({user: req.user})
-);
+// deprecated
+// app.get('/api/v1/user',
+//   connectEnsureLogin.ensureLoggedIn(),
+//   (req, res) => res.send({user: req.user})
+// );
 
   /* GET a Booklet by Id */
-app.get('/api/v1/:id', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  console.log('get booklet ' + req.params.id)
-  const id = mongoose.Types.ObjectId("5ec41ae4ad29422205fbb817");
-  res.send(Booklet.findById(id));
-});
+  // deprecated
+// app.get('/api/v1/:id', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+//   console.log('get booklet ' + req.params.id)
+//   const id = mongoose.Types.ObjectId("5ec41ae4ad29422205fbb817");
+//   res.send(Booklet.findById(id));
+// });
+
+/* PUT update user info */
+// to be implemented on front end
+// app.put('/api/v1/user', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
+//   console.log('update user info');
+//   User.replaceOne({_id: body._id}, body);
+// });
 
 /* GET Booklets by User Id */
 app.get('/api/v1/all/:userId', (req, res) => {
@@ -83,7 +92,6 @@ app.get('/api/v1/all/:userId', (req, res) => {
     "userId": mongoose.Types.ObjectId(userId)
   })
   query.exec().then(doc => {
-    console.log(doc);
     res.send(doc);
   }).catch(err => {
     console.log('error occured fetching user booklets: '+ err);
@@ -98,17 +106,10 @@ app.get('/api/v1/likes/:userId', (req, res) => {
     "likes": {$in: [mongoose.Types.ObjectId(userId)]} 
   })
   query.exec().then(doc => {
-    console.log(doc);
     res.send(doc);
   }).catch(err => {
     console.log('error occured fetching user likes: '+ err);
   })
-});
-
-/* PUT update user info */
-app.put('/api/v1/user', connectEnsureLogin.ensureLoggedIn(), (req, res) => {
-  console.log('update user info');
-  User.replaceOne({_id: body._id}, body);
 });
 
 /* POST a Booklet */
@@ -121,7 +122,6 @@ app.post('/api/v1/save', (req, res) => {
     }
     console.log('booklet saved');
   })
-  //dao.saveBooklet(req.body, req.params.userId, res);
 });
 
 /* POST pdf to be uploaded */
@@ -144,26 +144,6 @@ app.post('/api/v1/pdf', (req, res) => {
     }).catch(err => {
       console.log(err);
     })
-      // const booklet = new Booklet();
-      // booklet.save((err, booklet) => {
-      //   if (err) {
-      //     return console.error(err);
-      //   }
-      //   console.log('booklet saved from pdf');
-      // })
-    // console.log('Files', files)
-    // for (const pdf of Object.entries(files)) {
-    //   console.log('this is a saving of a pdf')
-    //   // save a pdf 
-    //   const booklet = new Booklet(pdfParser.getBookletFromPDF(pdf, userId));
-    //   booklet.save((err, booklet) => {
-    //     if (err) {
-    //       return console.error(err);
-    //     }
-    //     console.log('booklet saved from pdf');
-    //   })
-    //   //dao.savePdfAsBooklet(pdf, req.params.userId, res);    
-    // }
   })
 });
 }

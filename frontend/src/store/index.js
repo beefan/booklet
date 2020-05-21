@@ -146,10 +146,12 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    logout(state) {
+    logout() {
       console.log("logout called");
       apis.logout();
-      state.user = null;
+      this.commit("setUser", null);
+      this.commit("setUserBooklets", null);
+      this.commit("setUserLikes", null);
     },
     async login(state, user) {
       const res = await apis.login(user);
